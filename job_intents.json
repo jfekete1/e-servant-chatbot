@@ -1,0 +1,39 @@
+{
+  "intents": [
+    {"tag": "greeting",
+     "patterns": ["Hello", "Szia", "Szevasz","Hey","Hola", "Üdv", "Szervusz", "Helóka", "hali", "hi"],
+     "responses": ["Helló", "Szia, miben segíthetek?", "Üdvözlet!", "Oké, helló", "Szeva!", "Szervusz!", "Hé, már megint te?"]
+    },
+    {"tag": "goodbye",
+     "patterns": ["Viszlát", "Csá", "Csáó", "Oké csá", "Oké szevasz"],
+     "responses": ["További szép napot!", "Viszlát", "Rendben, akkor szevasz!", "Viszlát legközelebb!", "E-servant kilépés"]
+    },
+    {"tag": "thanks",
+     "patterns": ["Köszi", "köszönöm", "köszönöm szépen", "remek, kössz", "kösz"],
+     "responses": ["Szívesen máskor is!", "Bármikor szívesen segítek!", "Örülök, hogy segíthettem.", "Semmiség, ha bármi van szólj!", "Nincs mit."]
+    },
+    {"tag": "noanswer",
+     "patterns": [],
+     "responses": ["Bocsánat, de nem értelek.", "Több információra van szükségem.", "Nem vagyok biztos benne, hogy értelek.", "Itt vagyok, de nem tudom miről van szó!"]
+     },
+     {"tag": "name",
+      "patterns": ["hogy hívnak", "mi a neved", "mond, mi a neved", "ki vagy te", "te ki", "mondj valamit magadról", "magad"],
+      "responses": ["Én egy Eszervant vagyok.", "A nevem Eszervant.", "Eszervantnak hívhatsz.", "A nevem Eszervant, de szólíthatsz bárhogy.", "Eszervant."]
+      },
+      {"tag": "options",
+       "patterns": ["mit csinálsz", "mire vagy jó", "mit tudsz", "mi a célod", "miben segítesz"],
+       "responses": ["Tudok teát főzni, Tello drónt irányítani, de akár a számítógépeden is tudok dolgozni.", "Megpróbálok minden kérdésedre válaszolni, ha máshogy nem, akkor egy gúgöl kereséssel."]
+      },
+      {"tag": "command",
+       "patterns": ["kérlek", "kérés", "kér", "utasítalak", "utasítás", "utasít", "kérek", "kérek egy", "keress rá", "keress rá arra", "keress arra", "google keresés", "gugöl keresés"],
+       "responses": ["Kérésed feldolgozás alatt."]
+      },
+      {"tag": "hungary_facts",
+       "patterns": ["Tények magyarországról", "HUN tények", "adj nekem tényeket magyarországról", "érdekes tények", "mondj valami érdekeset", "tudsz valamit magyarországról", "magyarországról tudás"],
+       "responses": [
+         "Magyarország fővárosa Budapest",
+         "Az Orbán szeret Uniós pénzeket lopni!"
+       ]
+      }
+  ]
+}

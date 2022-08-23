@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>E-servant chatbot</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <style>
+      body
+      {
+
+        background-color: #000;
+        color: #FFF;
+      }
+
+      #switches
+      {
+        width: 100%;
+        padding: 0;
+        list-style-type: none;
+        text-align: center;
+      }
+
+      #switches li
+      {
+        display: inline-block;
+        font-size: large;
+        padding: 0.5em 0.5em;
+        cursor: pointer;
+      }
+
+      /* BOT */
+
+      #bot
+      {
+        position: relative;
+        text-align: left;
+        width: 24em;
+        height: 24em;
+        min-width: 10em;
+        min-height: 10em;
+        /*border: 1px solid lightblue;*/
+        margin: 0 auto;
+      }
+
+      #head
+      {
+        position: relative;
+        display: inline-block;
+        margin-top: 15%;
+        margin-left: 10%;
+        width: 80%;
+        height: 70%;
+        /*border : 1px solid yellow;*/
+      }
+
+      #face
+      {
+        position: absolute;
+        margin-left: 0%;
+        margin-right: 0%;
+        width: 100%;
+        height: 100%;
+        border: 0.4em solid #FFF;
+        border-radius: 1.5em;
+        /*border : 1px solid red;*/
+      }
+
+      #left-ear, #right-ear
+      {
+        position: absolute;
+        top: 30%;
+        width: 6%;
+        height: 25%;
+        border: 0.15em solid #FFF;
+        background-color: lightgray;
+        border-radius: 0.1em;
+      }
+
+      #left-ear
+      {
+        left: -6%;
+      }
+
+      #right-ear
+      {
+        right: -6%;
+      }
+
+      #left-ear-inner, #right-ear-inner
+      {
+        position: absolute;
+        top: 20%;
+        width: 100%;
+        height: 60%;
+        background-color: lightgray;
+        border-radius: 0.1em;
+      }
+
+      #left-ear-inner
+      {
+        left: -150%;
+      }
+
+      #right-ear-inner
+      {
+        right: -150%;
+      }
+
+      #eyes
+      {
+        position: absolute;
+        width: 70%;
+        height: 20%;
+        margin-left: 16%; /* 16 */
+        margin-top: 20%; /* 20 */
+        /*border : 1px solid lightseagreen;*/
+      }
+
+      #left-eye, #right-eye
+      {
+        position: absolute;
+        width: 35%;
+        height: 100%;
+        background-color: lightseagreen;
+        border-radius: 0.5em;
+        /*border: 0.15em solid #FFF;*/
+      }
+
+      #right-eye
+      {
+        right: 0%;
+      }
+
+      #mouth
+      {
+        position: absolute;
+        width: 30%;
+        height: 4%;
+        border-left: 0.2em solid #FFF;
+        border-right: 0.2em solid #FFF;
+        border-bottom: 0.2em solid #FFF;
+        border-top: 0.0em solid #FFF;
+        border-radius: 0.5em;
+        left: 35%;
+        bottom: 20%;
+      }
+
+      /* Animations */
+      #bot.neutral #left-eye, #bot.neutral #right-eye
+      {
+        animation: blink-eyes 3s infinite ease-in alternate;
+        animation-delay: 2s;
+      }
+
+      #bot.neutral #left-ear-inner
+      {
+        animation: move-left-ear-inner 5.0s infinite ease alternate;
+      }
+
+      #bot.neutral #right-ear-inner
+      {
+        animation: move-right-ear-inner 5.0s infinite ease alternate;
+      }
+
+      @keyframes blink-eyes {
+        0%   { height: 10%; margin-top: 10%}
+        10% { height: 100%; margin-top: 0%}
+        100% { height: 100%; margin-top: 0%}
+      }
+
+      /* Speaking */
+      #bot.speaking #mouth
+      {
+        border-top: 0.2em solid #FFF;
+        background-color: #FFF;
+        animation: speak-mouth 1.0s infinite ease alternate;
+      }
+
+      @keyframes speak-mouth {
+        0%   { width: 10%; height: 4%; left: 45%;}
+        25% { width: 30%; height: 10%; left: 35%;}
+        50% { width: 6%; height: 4%; left: 47%;}
+        75% { width: 40%; height: 8%; left: 30%;}
+        100% { width: 30%; height: 4%; left: 35%;}
+      }
+
+      /* Waiting (Thinking) */
+      #bot.thinking #eyes
+      {
+        animation: glance-eyes 8s infinite ease-in-out;
+        animation-delay: 2s;
+      }
+
+      #bot.thinking #mouth
+      {
+        animation: pinch-mouth 6.0s infinite ease alternate;
+        animation-delay: 4s;
+      }
+
+      #bot.thinking #left-ear-inner
+      {
+        animation: move-left-ear-inner 6.0s infinite ease alternate;
+        animation-delay: 4s;
+      }
+
+      #bot.thinking #right-ear-inner
+      {
+        animation: move-right-ear-inner 6.0s infinite ease alternate;
+        animation-delay: 4s;
+      }
+
+      @keyframes glance-eyes {
+        0%  { margin-left: 16%; }
+        10% { margin-left: 6%; }
+        40% { margin-left: 6%; }
+        60% { margin-left: 24%; }
+        70% { margin-left: 24%; }
+        80% { margin-left: 16%; }
+        100% { margin-left: 16%; }
+      }
+
+      @keyframes pinch-mouth {
+        0%   { width: 30%; left: 35%; }
+        48%  { width: 30%; left: 35%; }
+        50%  { width: 10%; left: 45%; }
+        52%  { width: 30%; left: 35%; }
+        100% { width: 30%; left: 35%;}
+      }
+
+      @keyframes move-left-ear-inner {
+        0%   { left: -150%; }
+        48%  { left: -150%; }
+        50%  { left: -100%; }
+        52%  { left: -150%; }
+        100% { left: -150%; }
+      }
+
+      @keyframes move-right-ear-inner {
+        0%   { right: -150%; }
+        48%  { right: -150%; }
+        50%  { right: -100%; }
+        52%  { right: -150%; }
+        100% { right: -150%; }
+      }
+
+      /* Listening */
+      #bot.listening #left-eye, #bot.listening #right-eye
+      {
+        background-color: lightgreen;
+        border-radius: 1em;
+        transition : border-radius 0.25s linear;
+        animation: none;
+      }
+
+      #bot.listening #left-ear, #bot.listening #right-ear,
+      #bot.listening #left-ear-inner, #bot.listening #right-ear-inner
+      {
+        background-color: lightgreen;
+      }
+
+      #bot.listening #face, 
+      #bot.listening #left-ear, #bot.listening #right-ear
+      {
+        border-color: lightgreen;
+        transition : border-color 0.25s linear;
+      }
+
+      #bot.listening #left-ear-inner,
+      #bot.listening #right-ear-inner
+      {
+        /*outline: 0.4em dotted lightgreen;*/
+        animation: border-bump 0.4s infinite ease alternate;
+        animation-delay: 0.5s;
+      }
+
+      @keyframes border-bump {
+        0% {
+          outline: 0.4em dotted lightgreen;
+        }
+        
+        100% {
+          outline: 0.2em dotted black;
+        }
+      }
+
+
+      /* Computing */
+      #bot.computing #left-eye, #bot.computing #right-eye
+      {
+        height: 100%;
+        width: 25%;
+        border-radius: 100%;
+        transition : all 0.25s linear;
+        border: 0.3em dashed black;
+        animation-delay: 0.5s;
+        background-color: #99FFFF;
+      }
+
+      #bot.computing #left-eye
+      {
+        animation: border-dance 1s infinite linear reverse;
+      }
+
+      #bot.computing #right-eye
+      {
+        animation: border-dance 1s infinite linear;
+      }
+
+      #bot.computing #face, 
+      #bot.computing #left-ear, #bot.computing #right-ear,
+      #bot.computing #left-ear-inner, #bot.computing #right-ear-inner
+      {
+        border-color: #99FFFF;
+        transition : border-color 0.25s linear;
+      }
+
+      #bot.computing #left-ear, #bot.computing #right-ear,
+      #bot.computing #left-ear-inner, #bot.computing #right-ear-inner
+      {
+        background-color: #99FFFF;
+        transition : background-color 0.25s linear;
+        animation: none;
+      }
+
+      #bot.computing #mouth
+      {
+        border: 0.5em solid #FFF;
+        width: 10%;
+        left: 45%;
+      }
+
+      @keyframes border-dance {
+        100% { 
+            transform: rotateZ(360deg); 
+          }
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome to E-servant Chatbot</h1>
+      <br>
+      <div id="container">
+        <div id="bot" class="neutral">
+          <div id="head">
+            <div id="left-ear">
+              <div id="left-ear-inner"></div>
+            </div>
+            <div id="face">
+              <div id="eyes">
+                <div id="left-eye"></div>
+                <div id="right-eye"></div>
+              </div>
+              <div id="mouth"></div>
+            </div>
+            <div id="right-ear">
+              <div id="right-ear-inner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+
+        <div class="row">
+          <div class="col-lg-9">
+            <input class="form-control" type="text" name="question" id="question">
+          </div>
+          <div class="col-lg-3">
+            <button class="btn btn-primary btn-block" id="submit-button">Send</button>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col">
+            <p id="response"></p>
+          </div>
+        </div>
+
+    </div>
+
+    <script src="/static/jquery.min.js" ></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+    <script>
+
+      function setStatus(newstatus)
+      {
+        $("#bot").removeClass("speaking thinking listening computing");
+        $("#bot").addClass(newstatus);
+      }
+
+      function timeout(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      
+      async function speakAnim()
+      {
+        await timeout(500);
+        $("#bot").removeClass("speaking thinking listening computing");
+        $("#bot").addClass('speaking');
+      }
+
+      jQuery(document).ready(function() {
+
+        $("#submit-button").click(function(e) {
+          e.preventDefault();
+          // setStatus('speaking');
+          speakAnim();
+
+          $.ajax({
+              type: "POST",
+              url: "/chatbot",
+              data: {
+                  question: $("#question").val()
+              },
+              success: function(result) {
+                if (result.response.includes("Találat:"))
+                {
+                  let link_txt = result.response.match(/Találat:(.*)$/i)[1];
+                  $("#response").append("<br>Én: "+$("#question").val()+ "<br> E-servant: Kérésedet feldolgoztam."+ "<br> E-servant: "+"<a href=\""+link_txt+"\">"+link_txt+"</a></br>");
+                  $("#question").val("");
+                  setStatus('');
+                }
+                else if (result.response.includes("Ismeretlen parancs"))
+                {
+                  $("#response").append("<br>Én: "+$("#question").val()+ "<br> E-servant: "+result.response);
+                  $("#question").val("");
+                  setStatus('computing');
+                }
+                else
+                {
+                  $("#response").append("<br>Én: "+$("#question").val()+ "<br> E-servant: "+result.response);
+                  $("#question").val("");
+                  setStatus('');
+                }
+              },
+              error: function(result) {
+                  alert('error');
+              }
+          });
+
+
+
+        });
+
+      });
+
+
+    </script>
+
+  </body>
+</html>

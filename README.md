@@ -11,7 +11,7 @@ pip install numpy
 pip install keras
 pip install tensorflow
 pip install flask
-pip install googlesearch-python
+pip install google
 pip install pyttsx3
 ```
 

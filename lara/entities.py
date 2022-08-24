@@ -135,14 +135,14 @@ def common():
 # menu commands
 def commands():
 	return {
-		"ok": [{"stem": "[jy]+e+a*[hps]*", "wordclass": "regex"}, {"stem": "igen"}, {"stem": "aha"},
-			   {"stem": "ja", "affix": ["ja", "h"]},
-			   {"stem": "ok", "affix": ["é", "s", "és", "sa", "ay", "ézd", "ézza"], "exc": [{"stem": "nem"}]},
-			   {"stem": "úgy", "exc": [{"stem": "nem"}]},
-			   {"stem": "így", "exc": [{"stem": "((m[eé]g)?[ns]em*i?|baj)", "wordclass": "regex"}]},
-			   {"stem": "jó", "wordclass": "adjective", "max_words": 4,
-				"exc": [{"stem": "((m[eé]g)?[ns]em*i?|baj)", "wordclass": "regex"},
-						{"stem": "(nap\w+|reg+elt|est[eé]t)", "wordclass": "regex"}]}],
+		# "ok": [{"stem": "[jy]+e+a*[hps]*", "wordclass": "regex"}, {"stem": "igen"}, {"stem": "aha"},
+		# 	   {"stem": "ja", "affix": ["ja", "h"]},
+		# 	   {"stem": "ok", "affix": ["é", "s", "és", "sa", "ay", "ézd", "ézza"], "exc": [{"stem": "nem"}]},
+		# 	   {"stem": "úgy", "exc": [{"stem": "nem"}]},
+		# 	   {"stem": "így", "exc": [{"stem": "((m[eé]g)?[ns]em*i?|baj)", "wordclass": "regex"}]},
+		# 	   {"stem": "jó", "wordclass": "adjective", "max_words": 4,
+		# 		"exc": [{"stem": "((m[eé]g)?[ns]em*i?|baj)", "wordclass": "regex"},
+		# 				{"stem": "(nap\w+|reg+elt|est[eé]t)", "wordclass": "regex"}]}],
 		"cancel": [{"stem": "^([ae]z\s)?(\w+\s)?(nem?|no(pe|ne)?)(\s\w+)?(\s\w+)?$", "boundary": False,
 					"exc": [{"stem": "jó"}, {"stem": "tud", "wordclass": "verb"}, {"stem": "sikerül", "affix": ["t"]},
 							{"stem": "haragudj", "affix": ["on"]}, {"stem": "tud", "wordclass": "verb"}],

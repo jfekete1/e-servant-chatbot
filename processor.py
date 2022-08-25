@@ -6,6 +6,7 @@ import numpy as np
 import pyttsx3
 from googlesearch import search
 import re
+import os
 
 from keras.models import load_model
 model = load_model('chatbot_model.h5')
@@ -78,10 +79,10 @@ def do_job(jobname, question):
     msg = ""
     if jobname == 'tea':
         msg += "Tea készítés folyamatban. "
-        say_locally(msg)
+        # say_locally(msg)
     elif jobname == 'menu':
         msg += "Menükészítés folyamatban. "
-        say_locally(msg)
+        # say_locally(msg)
     elif jobname == 'search':
         msg += "Erre a szövegre indítok google keresést: "
         found = "e-servant"
@@ -91,15 +92,20 @@ def do_job(jobname, question):
             pass
         print("Ezt a keresési feltételt találtam: ", found)
         msg += found
-        say_locally(msg)
+        # say_locally(msg)
         msg += " Találat: " + google_search(found)
     else:
         msg += "Ismeretlen parancs. "
-        say_locally(msg)
+        # say_locally(msg)
     return msg
 
-def chatbot_response(msg):
+def create_wav(txt, filename):
+    parancs = "/usr/bin/espeak -w " + filename + " -v hu+f2" + " " + "\"" + txt + "\""
+    os.system(parancs)
+
+def chatbot_response(msg, filename):
     ints = predict_class(msg, model)
     res = getResponse(ints, intents)
-    say_locally(res)
+    # say_locally(res)
+    create_wav(res, filename)
     return res

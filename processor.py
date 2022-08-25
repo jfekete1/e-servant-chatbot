@@ -75,16 +75,30 @@ def google_search(query):
         print(j)
         return j
 
-def do_job(jobname, question):
+def do_job(jobname, question, num):
     msg = ""
     if jobname == 'tea':
-        msg += "Tea készítés folyamatban. "
+        if num > 0:
+            msg += " ŐŐŐ, Ja és a Tea készítés is folyamatban van. "
+        else:
+            msg += " Tea készítés folyamatban. "
         # say_locally(msg)
     elif jobname == 'menu':
-        msg += "Menükészítés folyamatban. "
+        if num > 0:
+            msg += " ŐŐŐ, Ja és a Menükészítés is folyamatban van. "
+        else:
+            msg += " Menükészítés folyamatban. "
         # say_locally(msg)
+    elif jobname == 'something':
+        if num > 0:
+            msg += " ŐŐŐ, a valami részt nem értem. Pontosítsd mire gondolsz. "
+        else:
+            msg += " Nem tudom mit értesz a valami alatt, kérlek pontosítsd a kérésed. "
     elif jobname == 'search':
-        msg += "Erre a szövegre indítok google keresést: "
+        if num > 0:
+            msg += " Ja és erre a szövegre indítok google keresést: "
+        else:
+            msg += " Erre a szövegre indítok google keresést: "
         found = "e-servant"
         try:
             found = re.search('hogy (.*?)$', question).group(1)

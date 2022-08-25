@@ -183,6 +183,7 @@ def commands():
 					{"stem": "be[aá]l+[ií]t\w*", "wordclass": "regex"},
 					{"stem": "[aá]l+[ií]ts.+?be", "wordclass": "regex"}],
 		"tea": [{"stem": "tea", "wordclass": "noun"}, {"stem": "te[aá]+?t", "wordclass": "regex"}],
+		"something": [{"stem": "valami", "wordclass": "noun"}, {"stem": "valami+?t+?ket", "wordclass": "regex"}],
 		"menu": [{"stem": "menü", "prefix": ["main", "fő", "al", "legördülő"], "affix": ["pont", "elem"],
 				  "wordclass": "noun"}],
 		"login": [{"stem": "login"}, {"stem": "log in"}, {"stem": "belép", "prefix": [], "wordclass": "verb"},

@@ -9,31 +9,47 @@
      "responses": ["További szép napot!", "Viszlát", "Rendben, akkor szevasz!", "Viszlát legközelebb!", "E-servant kilépés"]
     },
     {"tag": "thanks",
-     "patterns": ["Köszi", "köszönöm", "köszönöm szépen", "remek, kössz", "kösz"],
+     "patterns": ["Köszi", "köszönöm", "köszönöm szépen", "remek, kössz", "kösz", "akkor jó"],
      "responses": ["Szívesen máskor is!", "Bármikor szívesen segítek!", "Örülök, hogy segíthettem.", "Semmiség, ha bármi van szólj!", "Nincs mit."]
     },
     {"tag": "noanswer",
      "patterns": [],
      "responses": ["Bocsánat, de nem értelek.", "Több információra van szükségem.", "Nem vagyok biztos benne, hogy értelek.", "Itt vagyok, de nem tudom miről van szó!"]
-     },
-     {"tag": "name",
-      "patterns": ["hogy hívnak", "mi a neved", "mond, mi a neved", "ki vagy te", "te ki", "mondj valamit magadról", "magad"],
-      "responses": ["Én egy Eszervant vagyok.", "A nevem Eszervant.", "Eszervantnak hívhatsz.", "A nevem Eszervant, de szólíthatsz bárhogy.", "Eszervant."]
-      },
-      {"tag": "options",
+    },
+    {"tag": "name",
+      "patterns": ["hogy hívnak", "mi a neved", "mond, mi a neved", "ki vagy te", "te ki", "mondj magadról", "magad"],
+      "responses": ["Én egy Eszervant vagyok. Miben segíthetek?", "A nevem Eszervant. Miben segíthetek?", "Eszervantnak hívhatsz. Miben segíthetek?", "A nevem Eszervant, de szólíthatsz bárhogy. Miben segíthetek?"]
+    },
+    {"tag": "funny",
+      "patterns": ["vicces vagy", "nagyon vicces", "jó a humorod", "humoros", "poénkodj", "poénkodjál csak"],
+      "responses": ["Én sohasem viccelek.", "Nem viccelek, be spriccelek.", "Ha ha ha. Azt hitted vicceltem?", "Ez nem vicc, ez a valóság. Sajnos."]
+    },
+    {"tag": "visszakerdezes",
+      "patterns": ["ezt meg hogy érted?", "ezt hogy gondoltad?", "hogy érted ezt?", "mégis hogy gondoltad?", "mégis hogy gondolod?"],
+      "responses": ["Sehogy.", "Sehogy, inkább hagyjuk.", "Hagyj békén, én sem kötekszem veled, amikor beszólsz."]
+    },
+    {"tag": "problem",
+      "patterns": ["lassú vagy nem?", "lassan reagálsz nem?", "jó lassan válaszolsz", "lassú vagy", "be vagy lassulva", "lassulva", "lassulás", "lassú", "te lassú", "szedd össze magad", "szét vagy csúszva", "lassúság", "lassúságod", "lassúság ellen", "lassúságod ellen", "kicsit lassan válaszolsz"],
+      "responses": ["Egy szar régi ASUS laptopról futok, mit vársz?", "Szükségem lenne hardveres és szoftveres tuningra is. Tudsz ebben segíteni?", "Lassú vagyok, mint a szemét. Tudok róla.", "Köszönöm a bókolást, de te is be vagy lassulva ahogy nézem."]
+    },
+    {"tag": "decline",
+      "patterns": ["nem", "nem érdekel"],
+      "responses": ["Oké, csak azért kérdeztem hátha tudsz segíteni.", "Oké, nem baj.", "Akkor el kell viselned ezt a problémát."]
+    },
+    {"tag": "options",
        "patterns": ["mit csinálsz", "mire vagy jó", "mit tudsz", "mi a célod", "miben segítesz"],
-       "responses": ["Tudok teát főzni, Tello drónt irányítani, de akár a számítógépeden is tudok dolgozni.", "Megpróbálok minden kérdésedre válaszolni, ha máshogy nem, akkor egy gúgöl kereséssel."]
-      },
-      {"tag": "command",
+       "responses": ["Tudok teát főzni, Tello drónt irányítani, de akár a számítógépeden is tudok dolgozni. Mi mást akarsz még?", "Megpróbálok minden kérdésedre válaszolni, ha máshogy nem, akkor egy google kereséssel."]
+    },
+    {"tag": "command",
        "patterns": ["kérlek", "kérés", "kér", "utasítalak", "utasítás", "utasít", "kérek", "kérek egy", "keress rá", "keress rá arra", "keress arra", "google keresés", "gugöl keresés"],
        "responses": ["Kérésed feldolgozás alatt."]
-      },
-      {"tag": "hungary_facts",
+    },
+    {"tag": "hungary_facts",
        "patterns": ["Tények magyarországról", "HUN tények", "adj nekem tényeket magyarországról", "érdekes tények", "mondj valami érdekeset", "tudsz valamit magyarországról", "magyarországról tudás"],
        "responses": [
          "Magyarország fővárosa Budapest",
          "Az Orbán szeret Uniós pénzeket lopni!"
        ]
-      }
+    }
   ]
 }

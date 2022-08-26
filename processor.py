@@ -7,6 +7,8 @@ import pyttsx3
 from googlesearch import search
 import re
 import os
+import sys, base64
+import time
 
 from keras.models import load_model
 model = load_model('chatbot_model.h5')
@@ -85,9 +87,9 @@ def do_job(jobname, question, num):
         # say_locally(msg)
     elif jobname == 'menu':
         if num > 0:
-            msg += " ŐŐŐ, Ja és a Menükészítés is folyamatban van. "
+            msg += " ŐŐŐ, Ja és készítek neked egy menüt. "
         else:
-            msg += " Menükészítés folyamatban. "
+            msg += " Készítek neked egy menüt. "
         # say_locally(msg)
     elif jobname == 'something':
         if num > 0:
@@ -108,6 +110,7 @@ def do_job(jobname, question, num):
         msg += found
         # say_locally(msg)
         msg += " Találat: " + google_search(found)
+        msg = msg.rstrip('\/')
     else:
         msg += "Ismeretlen parancs. "
         # say_locally(msg)
@@ -117,9 +120,27 @@ def create_wav(txt, filename):
     parancs = "/usr/bin/espeak -w " + filename + " -v hu+f2" + " " + "\"" + txt + "\""
     os.system(parancs)
 
-def chatbot_response(msg, filename):
+def create_base64_wav(txt, filename):
+    engine = pyttsx3.init()
+    engine.setProperty('voice','hungarian+f2')
+    engine.save_to_file(txt, filename)
+    engine.runAndWait()
+    engine.stop()
+    time.sleep(1)
+    f = open(filename, 'rb')
+    b = base64.b64encode(f.read())
+    b_str = b.decode()
+    f.close()
+    time.sleep(1)
+    parancs = "/usr/bin/rm -f ./" + filename
+    os.system(parancs)
+    return b_str
+
+
+def chatbot_response(msg):
     ints = predict_class(msg, model)
     res = getResponse(ints, intents)
-    # say_locally(res)
-    create_wav(res, filename)
+    # wav_str = create_base64_wav(res, filename)
+    # tuple_return = (res, wav_str)
+    # return tuple_return
     return res

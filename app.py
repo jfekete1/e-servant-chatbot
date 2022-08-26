@@ -24,7 +24,7 @@ def create_mp3(txt, filename):
     engine.save_to_file(txt, filename)
     engine.runAndWait()
     engine.stop()
-    # return filename
+
 
 def create_wav(txt, filename):
     parancs = "/usr/bin/espeak -w " + filename + " -v hu+f2" + " " + "\"" + txt + "\""
@@ -34,6 +34,9 @@ def create_wav(txt, filename):
 # def index():
 #     return render_template('index.html', **locals())
 
+# @app.route('/', methods=["GET", "POST"])
+# def index():
+#     return "asdasd"
 
 @app.route('/chatbot', methods=["GET", "POST"])
 def chatbotResponse():
@@ -62,15 +65,17 @@ def chatbotResponse():
 @app.route('/speech', methods=['GET'])
 def get_speech():
     txt = request.args.get('speech')
+    if txt == "":
+        txt = "szia"
     print("Ezt a stringet kaptam: ")
     print(txt)
     current_GMT = time.gmtime()
     ts = calendar.timegm(current_GMT)
     filename = str(ts) + ".mp3"
-    filename2 = str(ts - 1111) + ".mp3"
-    response = processor.chatbot_response(txt, filename)
+    # response, wav_str = processor.chatbot_response(txt, filename)
+    response = processor.chatbot_response(txt)
     # url = "http://192.168.10.105:8080/file?filename=" + filename
-    url = "http://77.110.136.125:8080/file?filename=" + filename
+    # url = "http://77.110.136.125:8080/file?filename=" + filename
 
     if response == "Kérésed feldolgozás alatt.":
         print("Meg kell állapítani a kérés tartalma alapján a végrehajtandó feladatot.")
@@ -85,13 +90,14 @@ def get_speech():
                 print(command)
                 response += processor.do_job(command, txt, i)
                 i = i + 1
-
-            create_mp3(response, filename)
-            # create_wav(response, filename2)
+            
             time.sleep(1)
-            return json.dumps({'msg': response, 'file': url})
+            wav_str = processor.create_base64_wav(response, filename)
+
+            return json.dumps({'msg': response, 'wavstr': wav_str})
     else:
-        return json.dumps({'msg': response, 'file': url})
+        wav_str = processor.create_base64_wav(response, filename)
+        return json.dumps({'msg': response, 'wavstr': wav_str})
 
 
 @app.route('/file', methods=['GET'])

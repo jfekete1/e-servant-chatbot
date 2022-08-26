@@ -13,7 +13,7 @@
      "responses": ["Szívesen máskor is!", "Bármikor szívesen segítek!", "Örülök, hogy segíthettem.", "Semmiség, ha bármi van szólj!", "Nincs mit."]
     },
     {"tag": "noanswer",
-     "patterns": [],
+     "patterns": ["vajon", "vaj", "vajon mi a fasz bajod van te geci?"],
      "responses": ["Bocsánat, de nem értelek.", "Több információra van szükségem.", "Nem vagyok biztos benne, hogy értelek.", "Itt vagyok, de nem tudom miről van szó!"]
     },
     {"tag": "name",
@@ -21,8 +21,8 @@
       "responses": ["Én egy Eszervant vagyok. Miben segíthetek?", "A nevem Eszervant. Miben segíthetek?", "Eszervantnak hívhatsz. Miben segíthetek?", "A nevem Eszervant, de szólíthatsz bárhogy. Miben segíthetek?"]
     },
     {"tag": "funny",
-      "patterns": ["vicces vagy", "nagyon vicces", "jó a humorod", "humoros", "poénkodj", "poénkodjál csak"],
-      "responses": ["Én sohasem viccelek.", "Nem viccelek, be spriccelek.", "Ha ha ha. Azt hitted vicceltem?", "Ez nem vicc, ez a valóság. Sajnos."]
+      "patterns": ["vicces vagy", "nagyon vicces", "jó a humorod", "humoros", "poénkodj", "poénkodjál csak", "szórakozol velem?", "ne szórakozz velem", "ne viccelj", "ne vicceskedjél"],
+      "responses": ["Én sohasem viccelek.", "Nem viccelek, be spriccelek. Hehe", "Ha ha ha. Azt hitted vicceltem?", "Ez nem vicc, ez a valóság. Sajnos."]
     },
     {"tag": "visszakerdezes",
       "patterns": ["ezt meg hogy érted?", "ezt hogy gondoltad?", "hogy érted ezt?", "mégis hogy gondoltad?", "mégis hogy gondolod?"],
@@ -34,7 +34,7 @@
     },
     {"tag": "decline",
       "patterns": ["nem", "nem érdekel"],
-      "responses": ["Oké, csak azért kérdeztem hátha tudsz segíteni.", "Oké, nem baj.", "Akkor el kell viselned ezt a problémát."]
+      "responses": ["Oké, csak azért mondtam hátha tudsz rajtam segíteni, de látom felesleges minden erőfeszítésem.", "Oké, nem baj.", "Akkor el kell viselned ezt a problémát."]
     },
     {"tag": "options",
        "patterns": ["mit csinálsz", "mire vagy jó", "mit tudsz", "mi a célod", "miben segítesz"],

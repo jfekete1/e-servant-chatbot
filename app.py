@@ -54,6 +54,11 @@ def get_speech():
         wav_str = processor.create_base64_wav(response, filename)
 
         return json.dumps({'msg': response, 'wavstr': wav_str})
+    else:
+        response = "Ismeretlen utasítás, kérlek olyan utasítást adj, amit tudok teljesíteni !"
+        wav_str = processor.create_base64_wav(response, filename)
+        return json.dumps({'msg': response, 'wavstr': wav_str})
+
 
 
 @app.route('/file', methods=['GET'])

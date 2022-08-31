@@ -6,14 +6,13 @@ To get started follow the steps below:
 
 2. Install all the required libraries 
 ```
+sudo apt install espeak
+sudo apt install ffmpeg
 pip install flask_cors
-pip install nltk
-pip install numpy
-pip install keras
-pip install tensorflow
 pip install flask
 pip install google
 pip install pyttsx3
+pip install waitress
 ```
 
 Run the chatbot.py file to create the model

@@ -60,7 +60,6 @@ def get_speech():
         return json.dumps({'msg': response, 'wavstr': wav_str})
 
 
-
 @app.route('/file', methods=['GET'])
 def get_file():
     filename = request.args.get('filename')

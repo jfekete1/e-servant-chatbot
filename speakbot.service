@@ -1,0 +1,11 @@
+[Unit]
+Description=speakbot TTS instance, that will generate sound from text via RESTful API.
+After=network.target
+
+[Service]
+User=speakbot
+WorkingDirectory=/home/speakbot/e-servant-chatbot
+ExecStart=/usr/bin/python3 /home/speakbot/e-servant-chatbot/app.py
+
+[Install]
+WantedBy=multi-user.target

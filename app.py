@@ -21,9 +21,9 @@ app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 # def index():
 #     return render_template('index.html', **locals())
 
-# @app.route('/', methods=["GET", "POST"])
-# def index():
-#     return "asdasd"
+@app.route('/', methods=["GET", "POST"])
+def index():
+    return "asdasd"
 
 
 @app.route('/speech', methods=['GET'])

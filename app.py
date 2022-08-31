@@ -7,7 +7,6 @@ from flask import Flask, render_template, jsonify, request, send_file
 import processor
 import os.path
 import sys
-import pyttsx3
 from waitress import serve
 sys.path.append(os.path.join(os.path.dirname(
     os.path.realpath(__file__)), os.pardir))
@@ -18,18 +17,6 @@ CORS(app)
 
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 
-def create_mp3(txt, filename):
-    engine = pyttsx3.init()
-    engine.setProperty('voice','hungarian+f2')
-    engine.save_to_file(txt, filename)
-    engine.runAndWait()
-    engine.stop()
-
-
-def create_wav(txt, filename):
-    parancs = "/usr/bin/espeak -w " + filename + " -v hu+f2" + " " + "\"" + txt + "\""
-    os.system(parancs)
-
 # @app.route('/', methods=["GET", "POST"])
 # def index():
 #     return render_template('index.html', **locals())
@@ -37,29 +24,6 @@ def create_wav(txt, filename):
 # @app.route('/', methods=["GET", "POST"])
 # def index():
 #     return "asdasd"
-
-@app.route('/chatbot', methods=["GET", "POST"])
-def chatbotResponse():
-
-    if request.method == 'POST':
-        the_question = request.form['question']
-
-        response = processor.chatbot_response(the_question)
-
-        if response == "Kérésed feldolgozás alatt.":
-            print(
-                "Meg kell állapítani a kérés tartalma alapján a végrehajtandó feladatot.")
-            response = "Kérésed feldolgozás alatt: "
-            commands = entities.commands()
-            commands_match = parser.Intents(commands).match_set(the_question)
-
-            if commands_match:
-                print('Az alábbi feladatokat adtad ki a számomra:')
-                for command in commands_match:
-                    print(command)
-                    response += processor.do_job(command, the_question, 0)
-
-    return jsonify({"response": response})
 
 
 @app.route('/speech', methods=['GET'])
@@ -72,31 +36,23 @@ def get_speech():
     current_GMT = time.gmtime()
     ts = calendar.timegm(current_GMT)
     filename = str(ts) + ".mp3"
-    # response, wav_str = processor.chatbot_response(txt, filename)
-    response = processor.chatbot_response(txt)
-    # url = "http://192.168.10.105:8080/file?filename=" + filename
-    # url = "http://77.110.136.125:8080/file?filename=" + filename
 
-    if response == "Kérésed feldolgozás alatt.":
-        print("Meg kell állapítani a kérés tartalma alapján a végrehajtandó feladatot.")
-        response = ""
-        commands = entities.commands()
-        commands_match = parser.Intents(commands).match_set(txt)
+    print("Meg kell állapítani a kérés tartalma alapján a végrehajtandó feladatot.")
+    response = ""
+    commands = entities.commands()
+    commands_match = parser.Intents(commands).match_set(txt)
 
-        if commands_match:
-            print('Az alábbi feladatokat adtad ki a számomra:')
-            i = 0
-            for command in commands_match:
-                print(command)
-                response += processor.do_job(command, txt, i)
-                i = i + 1
-            
-            time.sleep(1)
-            wav_str = processor.create_base64_wav(response, filename)
+    if commands_match:
+        print('Az alábbi feladatokat adtad ki a számomra:')
+        i = 0
+        for command in commands_match:
+            print(command)
+            response += processor.do_job(command, txt, i)
+            i = i + 1
 
-            return json.dumps({'msg': response, 'wavstr': wav_str})
-    else:
+        time.sleep(1)
         wav_str = processor.create_base64_wav(response, filename)
+
         return json.dumps({'msg': response, 'wavstr': wav_str})
 
 
@@ -111,6 +67,7 @@ def get_file():
 
 def main_prod():
     serve(app, host='0.0.0.0', port=8080)
+
 
 if __name__ == '__main__':
     main_prod()

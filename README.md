@@ -6,6 +6,7 @@ To get started follow the steps below:
 
 2. Install all the required libraries 
 ```
+pip install flask_cors
 pip install nltk
 pip install numpy
 pip install keras

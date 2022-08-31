@@ -1,5 +1,3 @@
-import pickle
-import numpy as np
 import pyttsx3
 from googlesearch import search
 import re
@@ -7,11 +5,6 @@ import os
 import sys, base64
 import time
 
-import json
-import random
-intents = json.loads(open('job_intents.json', encoding='utf-8').read())
-words = pickle.load(open('words.pkl','rb'))
-classes = pickle.load(open('classes.pkl','rb'))
 
 
 def say_locally(txt):

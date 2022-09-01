@@ -24,3 +24,30 @@ Run the APP to create a Flask front end on port 8888 (or any port the app is poi
 ```
 python app.py
 ```
+
+# IF YOU WANT HTTPS
+
+https://dev.to/thetrebelcc/how-to-run-a-flask-app-over-https-using-waitress-and-nginx-2020-235c
+
+http://esh-mqtt-0.esh.hu/ -> http://185.80.48.166
+http://esh-mqtt-0.esh.hu:8080 -> http://185.80.48.166
+
+#install certbot:
+which snap
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo certbot --nginx
+
+#refresh cert:
+sudo certbot renew --dry-run
+
+https://esh-mqtt-0.esh.hu
+
+sudo vi /etc/nginx/sites-available/default
+location / {
+    proxy_pass http://127.0.0.1:8080;
+    add_header Access-Control-Allow-Origin *;
+}
+sudo systemctl restart nginx
+

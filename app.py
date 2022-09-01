@@ -1,4 +1,4 @@
-from flask_cors import CORS
+# from flask_cors import CORS
 import json
 import calendar
 import time
@@ -13,7 +13,7 @@ sys.path.append(os.path.join(os.path.dirname(
 
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 

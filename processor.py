@@ -20,25 +20,48 @@ def google_search(query):
         print(j)
         return j
 
-def do_job(jobname, question, num):
+def greeting(id):
+    msg = ""
+    if id == 'hi':
+        msg += " Szia! "
+    return msg
+
+def answer_common(id):
+    msg = ""
+    if id == 'profanity':
+        msg += " Kérlek szépen kommunikálj velem! "
+    elif id == 'thx':
+        msg += " Egyébként szívesen máskor is! "
+    elif id == 'sorry':
+        msg += " Semmi baj, megbocsátok. "
+    elif id == 'nvm':
+        msg += " Szerintem is mindegy. "
+    elif id == 'dontknow':
+        msg += " Sajnos erről a témáról nincs elég információm. Beszéljünk másról. "
+    return msg
+
+def answer_command(jobname, question, num):
     msg = ""
     if jobname == 'tea':
         if num > 0:
             msg += " ŐŐŐ, Ja és a Tea készítés is folyamatban van. "
         else:
             msg += " Tea készítés folyamatban. "
-        # say_locally(msg)
     elif jobname == 'menu':
         if num > 0:
             msg += " ŐŐŐ, Ja és készítek neked egy menüt. "
         else:
             msg += " Készítek neked egy menüt. "
-        # say_locally(msg)
     elif jobname == 'something':
         if num > 0:
             msg += " ŐŐŐ, a valami részt nem értem. Pontosítsd mire gondolsz. "
         else:
             msg += " Nem tudom mit értesz a valami alatt, kérlek pontosítsd a kérésed. "
+    elif jobname == 'install':
+        if num > 0:
+            msg += " ŐŐŐ, nem értem mit szeretnél telepítani. "
+        else:
+            msg += " Nem tudom mit szeretnél telepíteni. "
     elif jobname == 'search':
         if num > 0:
             msg += " Ja és erre a szövegre indítok google keresést: "
@@ -51,12 +74,10 @@ def do_job(jobname, question, num):
             pass
         print("Ezt a keresési feltételt találtam: ", found)
         msg += found
-        # say_locally(msg)
         msg += " Találat: " + google_search(found)
         msg = msg.rstrip('\/')
     else:
         msg += "Ismeretlen parancs. "
-        # say_locally(msg)
     return msg
 
 def create_wav(txt, filename):

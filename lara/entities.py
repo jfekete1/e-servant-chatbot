@@ -61,6 +61,7 @@ def common():
 		"sorry": [{"stem": "(meg)?bocs(i(ka)?|esz|[aá](nat([aá][eé]rt)?|nat[aáo]t?|s+|s+on|j?t(ana)?))?",
 				   "wordclass": "regex"}, {"stem": "elnézés", "wordclass": "noun", "match_stem": False},
 				  {"stem": "sajn[aá]l(om|juk)", "wordclass": "regex"},
+				  {"stem": "haragud[j]?", "wordclass": "regex"},
 				  {"stem": "s+z*o*r+[iy]+(ka)?", "wordclass": "regex"}],
 		"lol": [{"stem": "(h[aei]){2,}h?", "wordclass": "regex"}, {"stem": "o?(lol)+o?", "wordclass": "regex"},
 				{"stem": "[\:\;]\-*[dp\)9]+", "wordclass": "regex", "boundary": False},
@@ -99,6 +100,7 @@ def common():
 						  "stem": "(fel|le|meg|r[aá]|ki|be|oda|[oö]s+ze|bele|hoz+[aá])?bas*z+d?(at)?(hat)?\s?(us|a[dk]?|n?[aá][kl]|[aá]?t[aáo][lkm]?|ot+|ni|n[aá]n?[dlkm]?|va|meg|ki)?",
 						  "wordclass": "regex", "exc": [{"stem": "megye"}]},
 					  {"stem": "fasz", "prefix": ["ló", "agy"], "wordclass": "noun"},
+					  {"stem": "fasszopó", "wordclass": "noun"},
 					  {"stem": "fasza", "wordclass": "adjective"}, {"stem": "geci", "wordclass": "noun"},
 					  {"stem": "kurva", "affix": ["élet", "anya", "anyja", "annya"], "wordclass": "noun"},
 					  {"stem": "hülye", "wordclass": "adjective"},
@@ -122,6 +124,7 @@ def common():
 					 {"stem": "helyes", "max_words": 3,
 					  "exc": [{"stem": "(let+|volna|mond\w*|[ns]em?)", "wordclass": "regex"}]}],
 		"dontknow": [{"stem": "fogalmam sincs", "affix": ["en"]},
+					 {"stem": "szerint", "affix": ["ed"]},
 					 {"stem": "(m[eé]g)?[ns]em?\stud(hat)?o\w+", "wordclass": "regex", "exc": [{"stem": "nem tudod"}]},
 					 {"stem": "hon+an.+?tud(jam|(hat)?n[aá]m)", "wordclass": "regex"}],
 		"dontunderstand": [

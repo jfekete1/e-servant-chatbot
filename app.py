@@ -1,4 +1,6 @@
-# from flask_cors import CORS
+# for development
+from flask_cors import CORS
+
 import json
 import calendar
 import time
@@ -13,7 +15,8 @@ sys.path.append(os.path.join(os.path.dirname(
 
 
 app = Flask(__name__)
-# CORS(app)
+# for development
+CORS(app)
 
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 
@@ -21,9 +24,23 @@ app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 # def index():
 #     return render_template('index.html', **locals())
 
-# @app.route('/', methods=["GET", "POST"])
-# def index():
-#     return "asdasd"
+@app.route('/api', methods=["GET", "POST"])
+def api():
+    if request.method == 'GET':
+        with open('trained_model.json') as f:
+            data = json.load(f)
+            return jsonify(data)
+    if request.method == 'POST':
+        # data = request.get_json(force=True)
+        data = request.json
+        print('icomming request: ')
+        print(request.args)
+        print(data)
+        with open('trained_model.json', 'w') as json_file:
+            json.dump(data, json_file)
+        return jsonify(data)
+    else:
+        return "ERROR: Unknown method"
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -35,9 +52,17 @@ def index():
     current_GMT = time.gmtime()
     ts = calendar.timegm(current_GMT)
     filename = str(ts) + ".mp3"
-
-    print("Meg kell állapítani a kérés tartalma alapján a végrehajtandó feladatot.")
     response = ""
+
+    common = entities.common()
+    common_match = parser.Intents(common).match_set(txt)
+
+    if common_match:
+        print("Az alábbi általános üzenetet kaptam:")
+        for com in common_match:
+            print(com)
+            response += processor.greeting(com)
+
     commands = entities.commands()
     commands_match = parser.Intents(commands).match_set(txt)
 
@@ -46,9 +71,16 @@ def index():
         i = 0
         for command in commands_match:
             print(command)
-            response += processor.do_job(command, txt, i)
+            response += processor.answer_command(command, txt, i)
             i = i + 1
 
+    if common_match:
+        print("Az alábbi általános üzenetet kaptam:")
+        for com in common_match:
+            print(com)
+            response += processor.answer_common(com)
+
+    if response != "":
         time.sleep(1)
         wav_str = processor.create_base64_wav(response, filename)
 
@@ -69,32 +101,14 @@ def get_speech():
     ts = calendar.timegm(current_GMT)
     filename = str(ts) + ".mp3"
 
-    print("Meg kell állapítani a kérés tartalma alapján a végrehajtandó feladatot.")
-    response = ""
-    commands = entities.commands()
-    commands_match = parser.Intents(commands).match_set(txt)
-
-    if commands_match:
-        print('Az alábbi feladatokat adtad ki a számomra:')
-        i = 0
-        for command in commands_match:
-            print(command)
-            response += processor.do_job(command, txt, i)
-            i = i + 1
-
-        time.sleep(1)
-        wav_str = processor.create_base64_wav(response, filename)
-
-        return json.dumps({'msg': response, 'wavstr': wav_str})
-    else:
-        response = "Ismeretlen utasítás, kérlek olyan utasítást adj, amit tudok teljesíteni !"
-        wav_str = processor.create_base64_wav(response, filename)
-        return json.dumps({'msg': response, 'wavstr': wav_str})
+    wav_str = processor.create_base64_wav(txt, filename)
+    return json.dumps({'msg': txt, 'wavstr': wav_str})
 
 
 @app.route('/file', methods=['GET'])
 def get_file():
     filename = request.args.get('filename')
+    # filename = "trained_model.json"
     return send_file(filename, as_attachment=True)
 
 

@@ -111,12 +111,22 @@ def get_file():
     # filename = "trained_model.json"
     return send_file(filename, as_attachment=True)
 
+# @app.route('/sms', methods=['GET'])
+# def get_sms():
+#     key = request.args.get('key')
+#     message = request.args.get('message')
+#     number = request.args.get('number')
+#     print("Sending SMS")
+#     processor.send_sms(message, number, key)
+#     return "asdasd"
+
 
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0', port='8080', debug=True)
 
 def main_prod():
     serve(app, host='0.0.0.0', port=8080, url_scheme='https')
+    # serve(app, host='0.0.0.0', port=8080)
 
 
 if __name__ == '__main__':

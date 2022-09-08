@@ -146,6 +146,8 @@ def commands():
 		# 	   {"stem": "jó", "wordclass": "adjective", "max_words": 4,
 		# 		"exc": [{"stem": "((m[eé]g)?[ns]em*i?|baj)", "wordclass": "regex"},
 		# 				{"stem": "(nap\w+|reg+elt|est[eé]t)", "wordclass": "regex"}]}],
+		"sms": [{"stem": "sms", "affix": ["-t", "eket"]},
+				{"stem": "üzen", "affix": ["et", "j", "nék", "etet"]}],
 		"cancel": [{"stem": "^([ae]z\s)?(\w+\s)?(nem?|no(pe|ne)?)(\s\w+)?(\s\w+)?$", "boundary": False,
 					"exc": [{"stem": "jó"}, {"stem": "tud", "wordclass": "verb"}, {"stem": "sikerül", "affix": ["t"]},
 							{"stem": "haragudj", "affix": ["on"]}, {"stem": "tud", "wordclass": "verb"}],

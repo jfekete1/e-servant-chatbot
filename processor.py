@@ -8,7 +8,13 @@ import random
 import requests
 import json
 
-
+telszamok = {
+    "lacusnak": "36317000331",
+    "danonak": "36309817729",
+    "danónak": "36309817729",
+    "apusnak": "36304742067",
+	"ainak": "36303303527"
+}
 
 def say_locally(txt):
     engine = pyttsx3.init()
@@ -75,8 +81,9 @@ def answer_command(jobname, question, num):
         print("Neki küldök SMS-t: ", smsRecipient)
         msg += " SMS-t küldtem " + smsRecipient
         number='36703089523'
-        if smsRecipient.lower() == "lacusnak":
-            number='36317000331'
+        for name, telszam in telszamok.items():
+            if smsRecipient.lower() == name:
+                number=telszam
 
         print("Erre a számra küldöm az SMS-t: ", number)
 

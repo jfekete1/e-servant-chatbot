@@ -48,6 +48,8 @@ def answer_common(id):
         msg += " Szerintem is mindegy. "
     elif id == 'dontknow':
         msg += " Sajnos erről a témáról nincs elég információm. Beszéljünk másról. "
+    elif id == 'whathelp':
+        msg += " Több mindenben tudok segíteni. Fel tudok olvasni, illetve le tudok fordítani bármilyen szöveget. Rá is tudok keresni bármire, illetve tudok SMS-t küldeni a kontaktjaidnak!"
     return msg
 
 def answer_command(jobname, question, num):
@@ -96,6 +98,8 @@ def answer_command(jobname, question, num):
         print("Ezt a szöveget küldöm el SMS-ben: ", smsText)
         msg += ", ezzel a szöveggel: " + smsText
         send_sms(smsText, number)
+
+
 
     elif jobname == 'search':
         if num > 0:

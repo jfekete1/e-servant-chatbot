@@ -3,6 +3,9 @@
 # common intents
 def common():
 	return {
+		"whathelp": [{"stem": "segít"},
+				  {"stem": "segít[s]", "wordclass": "regex"},
+				  {"stem": "[Mm]iben.+?(tudsz|fogsz).+?segíteni", "wordclass": "regex"}],
 		"yes": [{"stem": "y", "max_words": 1}, {"stem": "yes"}, {"stem": "igen", "exc": [{"stem": "de"}]},
 				{"stem": "aha"}, {"stem": "ja", "affix": ["ja", "h"], "exc": [{"stem": "de"}]},
 				{"stem": "ok", "affix": ["é", "s", "és", "sa", "ay"], "exc": [{"stem": "de"}, {"stem": "nem"}]},
@@ -211,11 +214,11 @@ def commands():
 				 {"stem": "el[oöő]rel[eé]p([eé]s)?", "wordclass": "regex"},
 				 {"stem": "l[eé]p.+?el[oöő]re", "wordclass": "regex"}, {"stem": "redo"},
 				 {"stem": "m[eé]gse.+?von.+?vis+za", "wordclass": "regex"}],
-		"restart": [{"stem": "ind[ií][ct]+sa?d?(\sel)?(\s[uú]j(ra|b[oó]l))", "wordclass": "regex"},
-					{"stem": "újraindít", "wordclass": "verb"}, {
-						"stem": "(([uú]jra)?kezd\w{0,5}|kezd\w{0,5}.+?([uú]jra|el[oöő]l?r[oö]l|(leg)?elej[eé](t|r)[oöő]l))",
-						"wordclass": "regex"}, {"stem": "restart", "wordclass": "verb", "prefix": []},
-					{"stem": "reset", "wordclass": "verb", "prefix": []}],
+		# "restart": [{"stem": "ind[ií][ct]+sa?d?(\sel)?(\s[uú]j(ra|b[oó]l))", "wordclass": "regex"},
+		# 			{"stem": "újraindít", "wordclass": "verb"}, {
+		# 				"stem": "(([uú]jra)?kezd\w{0,5}|kezd\w{0,5}.+?([uú]jra|el[oöő]l?r[oö]l|(leg)?elej[eé](t|r)[oöő]l))",
+		# 				"wordclass": "regex"}, {"stem": "restart", "wordclass": "verb", "prefix": []},
+		# 			{"stem": "reset", "wordclass": "verb", "prefix": []}],
 		"play": [{"stem": "(le)?j[aá](ts+z|c+)([aá]([dls]|ni))?(\sle)?(\svalamit?)?(\segy)?", "wordclass": "regex"},
 				 {"stem": "play"}, {"stem": "indít", "wordclass": "verb", "prefix": ["el"], "exc": [{"stem": "újra"}]}],
 		"stop": [

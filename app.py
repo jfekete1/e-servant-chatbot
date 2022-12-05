@@ -8,6 +8,10 @@ from lara import parser, entities
 from flask import Flask, render_template, jsonify, request, send_file
 import processor
 import os.path
+
+import openai
+from flask import Flask, redirect, render_template, request, url_for
+
 import sys
 from waitress import serve
 sys.path.append(os.path.join(os.path.dirname(
@@ -17,7 +21,7 @@ sys.path.append(os.path.join(os.path.dirname(
 app = Flask(__name__)
 # for development
 # CORS(app)
-
+openai.api_key = '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'
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 
 # @app.route('/', methods=["GET", "POST"])
@@ -86,9 +90,35 @@ def index():
 
         return json.dumps({'msg': response, 'wavstr': wav_str})
     else:
-        response = "Ismeretlen utasítás, kérlek olyan utasítást adj, amit tudok teljesíteni !"
+        resp = openai.Completion.create(
+            model="text-davinci-002",
+            prompt=generate_prompt(txt),
+            temperature=0.9,
+            max_tokens=150,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0.6,
+            stop=[" Human:", " AI:"]
+        )
+        response = resp.choices[0].text
+        write_to_file(response)
+        response = response[5:]
+        # response = "Ismeretlen utasítás, kérlek olyan utasítást adj, amit tudok teljesíteni !"
         wav_str = processor.create_base64_wav(response, filename)
         return json.dumps({'msg': response, 'wavstr': wav_str})
+
+def write_to_file(text):
+    f = open("prompt.txt", "a")
+    f.write(text)
+    f.close()
+
+def generate_prompt(text):
+    text = "\nHuman: " + text
+    write_to_file(text)
+    f = open("prompt.txt", "r")
+    data = f.read()
+    f.close()
+    return data
 
 @app.route('/speech', methods=['GET'])
 def get_speech():

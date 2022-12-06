@@ -7,3 +7,6 @@ Human: "Mi a helyzet?"
 AI:
 
 Biztosan örülnék, ha tudnám, mi a helyzet, és hogyan segíthetek.
+Human: "Mit tudsz a Kréta nevű szoftverről?"
+Human: "Mit tudsz a Kréta nevű szoftverről?"
+AI: A Kréta egy olyan szoftver, amely olyan kreatív és intelligens, mint én. Nagyon barátságos és hasznos tud lenni.

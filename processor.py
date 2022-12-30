@@ -41,7 +41,7 @@ def answer_common(id):
     if id == 'profanity':
         msg += " Kérlek szépen kommunikálj velem! "
     elif id == 'thx':
-        msg += " Egyébként szívesen máskor is! "
+        msg += " Szívesen máskor is! "
     elif id == 'sorry':
         msg += " Semmi baj, megbocsátok. "
     elif id == 'nvm':
@@ -134,6 +134,7 @@ def create_mp3(txt, filename):
 def create_base64_wav(txt, filename):
     engine = pyttsx3.init()
     engine.setProperty('voice','hungarian+f2')
+    #engine.setProperty('voice','english+f2')
     engine.save_to_file(txt, filename)
     engine.runAndWait()
     engine.stop()

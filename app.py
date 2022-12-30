@@ -1,6 +1,7 @@
 # for development
 # from flask_cors import CORS
 
+from pprint import pprint
 import json
 import calendar
 import time
@@ -21,7 +22,7 @@ sys.path.append(os.path.join(os.path.dirname(
 app = Flask(__name__)
 # for development
 # CORS(app)
-openai.api_key = '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'
+openai.api_key = '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'
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 
 # @app.route('/', methods=["GET", "POST"])
@@ -94,13 +95,14 @@ def index():
             model="text-davinci-002",
             prompt=generate_prompt(txt),
             temperature=0.9,
-            max_tokens=150,
+            max_tokens=500,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0.6,
             stop=[" Human:", " AI:"]
         )
         response = resp.choices[0].text
+        pprint(resp)
         write_to_file(response)
         response = response[5:]
         # response = "Ismeretlen utasítás, kérlek olyan utasítást adj, amit tudok teljesíteni !"
@@ -109,6 +111,11 @@ def index():
 
 def write_to_file(text):
     f = open("prompt.txt", "a")
+    f.write(text)
+    f.close()
+
+def write_to_resp(text):
+    f = open("resp.txt", "a")
     f.write(text)
     f.close()
 

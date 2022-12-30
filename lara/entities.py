@@ -259,8 +259,8 @@ def commands():
 		"order": [{"stem": "rendez", "wordclass": "verb", "prefix": ["el"]},
 				  {"stem": "rendel", "wordclass": "verb", "prefix": ["meg"]}],
 		"install": [{"stem": "telepít", "wordclass": "verb", "prefix": ["fel", "újra", "rá"]},
-					{"stem": "install", "wordclass": "verb", "prefix": ["un", "fel", "le", "rá"]},
-					{"stem": "rak", "wordclass": "verb", "prefix": ["fel"]}],
+					{"stem": "install", "wordclass": "verb", "prefix": ["un", "fel", "le", "rá"]}],
+#					{"stem": "rak", "wordclass": "verb", "prefix": ["fel"]}],
 	}
 
 

@@ -22,8 +22,7 @@ sys.path.append(os.path.join(os.path.dirname(
 app = Flask(__name__)
 # for development
 # CORS(app)
-# openai.api_key = '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'
-openai.api_key = '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'
+openai.api_key = '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'
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 
 # @app.route('/', methods=["GET", "POST"])

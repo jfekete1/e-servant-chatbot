@@ -1,5 +1,5 @@
 # for development
-from flask_cors import CORS
+# from flask_cors import CORS
 
 from pprint import pprint
 import json
@@ -21,7 +21,7 @@ sys.path.append(os.path.join(os.path.dirname(
 
 app = Flask(__name__)
 # for development
-CORS(app)
+# CORS(app)
 # openai.api_key = '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'
 openai.api_key = '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'
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'

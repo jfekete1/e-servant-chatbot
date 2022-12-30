@@ -85,7 +85,7 @@ def common():
 		"again": [{"stem": "[uú]j(ra|b[oó]l|at)|(meg)?ism[eé]t(l[eé]s|el(je|ni)?d?)?|m[eé]g\s?eg+y(szer|et)|megint?",
 				   "wordclass": "regex", "exc": [{"stem": "vagyok"}, {"stem": "ne", "affix": ["m"]}]}],
 		"command": [
-			{"stem": "(csin[aá]l(jad?|d)|(keres|mutas|mond)[aedjos]+n?|n[eé]z[nz]?[eé]?[dl]|akaro[km]|utas[ií]t\w{1,})",
+			{"stem": "(csin[aá]l(jad?|d)|(keres|mutas)[aedjos]+n?|n[eé]z[nz]?[eé]?[dl]|akaro[km]|utas[ií]t\w{1,})",
 			 "wordclass": "regex"}, {"stem": "haj[cts]+(a|[aá]?[ld])\sv[eé]gre", "wordclass": "regex"}],
 		"question": [{"stem": "(\?+$)|(\?+\s\w+)", "wordclass": "regex"},
 					 {"stem": "([^,][^,\S+]hogy|^hogy)(an)?", "wordclass": "regex"}, {"stem": "hol"},
@@ -168,9 +168,10 @@ def commands():
 				 {"stem": "folyta[st]+(a|[ao]?[dn]|ni|[aá]s)?", "wordclass": "regex",
 				  "exc": [{"stem": "((m[eé]g)?[ns]em*i?|baj)", "wordclass": "regex"}]},
 				 {"stem": "következő", "affix": ["t", "re"]},
-				 {"stem": "mond+([hj]a[dt]?)?(od|ja)?", "wordclass": "regex",
-				  "exc": [{"stem": "(vala)?[km]i([jlnv]?y?[eé])?[klrt]?", "wordclass": "regex"}, {"stem": "nem"},
-						  {"stem": "csak"}, {"stem": "hogy(an)?\smond\w*", "wordclass": "regex"}]}],
+				#  {"stem": "mond+([hj]a[dt]?)?(od|ja)?", "wordclass": "regex",
+				#   "exc": [{"stem": "(vala)?[km]i([jlnv]?y?[eé])?[klrt]?", "wordclass": "regex"}, {"stem": "nem"},
+				# 		  {"stem": "csak"}, {"stem": "hogy(an)?\smond\w*", "wordclass": "regex"}]}
+						  ],
 		"back": [{"stem": "back"}, {"stem": "vissza", "max_words": 5, "affix": ["lép", "lépés"],
 									"exc": [{"stem": "hang\w*", "wordclass": "regex"}]},
 				 {"stem": "hátra", "max_words": 4}, {"stem": "előző", "wordclass": "noun", "max_words": 5}],

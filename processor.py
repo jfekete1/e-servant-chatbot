@@ -120,21 +120,25 @@ def answer_command(jobname, question, num):
         msg += "Ismeretlen parancs. "
     return msg
 
-def create_wav(txt, filename):
-    parancs = "/usr/bin/espeak -w " + filename + " -v hu+f2" + " " + "\"" + txt + "\""
-    os.system(parancs)
+# def create_wav(txt, filename):
+#     parancs = "/usr/bin/espeak -w " + filename + " -v hu+f2" + " " + "\"" + txt + "\""
+#     os.system(parancs)
 
-def create_mp3(txt, filename):
-    engine = pyttsx3.init()
-    engine.setProperty('voice','hungarian+f2')
-    engine.save_to_file(txt, filename)
-    engine.runAndWait()
-    engine.stop()
+# def create_mp3(txt, filename):
+#     engine = pyttsx3.init()
+#     engine.setProperty('voice','hungarian+f2')
+#     engine.save_to_file(txt, filename)
+#     engine.runAndWait()
+#     engine.stop()
 
-def create_base64_wav(txt, filename):
+def create_base64_wav(txt, filename, lang):
     engine = pyttsx3.init()
-    engine.setProperty('voice','hungarian+f2')
-    #engine.setProperty('voice','english+f2')
+    if lang == "hu":
+        engine.setProperty('voice','hungarian+f2')
+    elif lang == "en":
+        engine.setProperty('voice','english+f2')
+    else:
+        engine.setProperty('voice','hungarian+f2')
     engine.save_to_file(txt, filename)
     engine.runAndWait()
     engine.stop()

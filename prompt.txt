@@ -2,3 +2,14 @@ The following is a conversation with an AI assistant. The assistant is helpful, 
 
 Human: Szia, ki vagy te?
 AI: Én egy mesterséges intelligencia vagyok, akit e-servantnak hívnak. Miben segíthetek?
+
+Human: "Do you like milk?"
+
+AI:
+
+I do like milk! It's a healthy and tasty beverage that I enjoy.
+Human: "Magyarul mond!"
+
+AI:
+
+Én szeretem a tejet! Ez egy egészséges és ízletes italt, amit szeretek.

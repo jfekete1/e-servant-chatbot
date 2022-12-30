@@ -1,5 +1,5 @@
 # for development
-# from flask_cors import CORS
+from flask_cors import CORS
 
 from pprint import pprint
 import json
@@ -21,8 +21,9 @@ sys.path.append(os.path.join(os.path.dirname(
 
 app = Flask(__name__)
 # for development
-# CORS(app)
-openai.api_key = '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'
+CORS(app)
+# openai.api_key = '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'
+openai.api_key = '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'
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 
 # @app.route('/', methods=["GET", "POST"])
@@ -50,10 +51,13 @@ def api():
 @app.route('/', methods=["GET", "POST"])
 def index():
     txt = request.args.get('speech')
+    lang = request.args.get('lang')
     if txt == "":
         txt = "szia"
     print("Ezt a stringet kaptam: ")
     print(txt)
+    print("Ezt a nyelvet kaptam: ")
+    print(lang)
     current_GMT = time.gmtime()
     ts = calendar.timegm(current_GMT)
     filename = str(ts) + ".mp3"
@@ -87,7 +91,7 @@ def index():
 
     if response != "":
         time.sleep(1)
-        wav_str = processor.create_base64_wav(response, filename)
+        wav_str = processor.create_base64_wav(response, filename, lang)
 
         return json.dumps({'msg': response, 'wavstr': wav_str})
     else:
@@ -106,7 +110,7 @@ def index():
         write_to_file(response)
         response = response[5:]
         # response = "Ismeretlen utasítás, kérlek olyan utasítást adj, amit tudok teljesíteni !"
-        wav_str = processor.create_base64_wav(response, filename)
+        wav_str = processor.create_base64_wav(response, filename, lang)
         return json.dumps({'msg': response, 'wavstr': wav_str})
 
 def write_to_file(text):
@@ -138,7 +142,7 @@ def get_speech():
     ts = calendar.timegm(current_GMT)
     filename = str(ts) + ".mp3"
 
-    wav_str = processor.create_base64_wav(txt, filename)
+    wav_str = processor.create_base64_wav(txt, filename, "hu")
     return json.dumps({'msg': txt, 'wavstr': wav_str})
 
 

@@ -8,6 +8,7 @@ import time
 from lara import parser, entities
 from flask import Flask, render_template, jsonify, request, send_file
 import processor
+import os
 import os.path
 
 import openai
@@ -22,7 +23,7 @@ sys.path.append(os.path.join(os.path.dirname(
 app = Flask(__name__)
 # for development
 # CORS(app)
-openai.api_key = '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'
+openai.api_key = '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'
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 
 # @app.route('/', methods=["GET", "POST"])
@@ -51,6 +52,7 @@ def api():
 def index():
     txt = request.args.get('speech')
     lang = request.args.get('lang')
+    prompt = request.args.get('prompt')
     if txt == "":
         txt = "szia"
     print("Ezt a stringet kaptam: ")
@@ -96,7 +98,7 @@ def index():
     else:
         resp = openai.Completion.create(
             model="text-davinci-002",
-            prompt=generate_prompt(txt),
+            prompt=generate_prompt(txt, prompt),
             temperature=0.9,
             max_tokens=500,
             top_p=1,
@@ -106,26 +108,46 @@ def index():
         )
         response = resp.choices[0].text
         pprint(resp)
-        write_to_file(response)
+        write_to_file(response, prompt)
         response = response[5:]
         # response = "Ismeretlen utasítás, kérlek olyan utasítást adj, amit tudok teljesíteni !"
         wav_str = processor.create_base64_wav(response, filename, lang)
         return json.dumps({'msg': response, 'wavstr': wav_str})
 
-def write_to_file(text):
-    f = open("prompt.txt", "a")
+@app.route('/deletefiles', methods=['DELETE'])
+def deletefiles():
+    print("deletefiles route activated ")
+    # response = delete_files()
+    return json.dumps({'msg': "ASDASDADSASD"})
+
+
+def write_to_file(text, filename):
+    f = open(filename, "a")
     f.write(text)
     f.close()
+
+def delete_files():
+    files = os.listdir('.')
+    for file in files:
+        if '.' not in file and not os.path.isdir(file):
+                os.remove(file)
+    return "deleted all files"
 
 def write_to_resp(text):
     f = open("resp.txt", "a")
     f.write(text)
     f.close()
 
-def generate_prompt(text):
-    text = "\nHuman: " + text
-    write_to_file(text)
-    f = open("prompt.txt", "r")
+def generate_prompt(text, filename):
+    if text:
+        text = "\nHuman: " + text
+    if not os.path.exists(filename):
+        f = open("prompt.txt", "r")
+        data = f.read()
+        f.close()
+        write_to_file(data, filename)
+    write_to_file(text, filename)
+    f = open(filename, "r")
     data = f.read()
     f.close()
     return data
@@ -143,7 +165,6 @@ def get_speech():
 
     wav_str = processor.create_base64_wav(txt, filename, "hu")
     return json.dumps({'msg': txt, 'wavstr': wav_str})
-
 
 @app.route('/file', methods=['GET'])
 def get_file():

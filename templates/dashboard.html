@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Apus Weather Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+    #vis {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Apus Weather Dashboard</h1>
+
+  <form id="rangeForm">
+    <label>
+      Start:
+      <input type="datetime-local" name="start" required>
+    </label>
+    <label>
+      End:
+      <input type="datetime-local" name="end" required>
+    </label>
+    <button type="submit">Update</button>
+  </form>
+
+  <div id="vis"></div>
+
+  <script>
+    document.getElementById('rangeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const start = e.target.start.value;
+      const end = e.target.end.value;
+      const url = `/apus/dashboard?start=${start}&end=${end}`;
+      window.location.href = url;
+    });
+
+    const chartData = {{ chart_data | safe }};
+
+    const spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "description": "Temperature over time",
+      "data": { "values": chartData },
+      "mark": "line",
+      "encoding": {
+        "x": { "field": "timestamp", "type": "temporal", "title": "Time" },
+        "y": { "field": "temp", "type": "quantitative", "title": "Temperature (°C)" }
+      }
+    };
+
+    vegaEmbed('#vis', spec);
+  </script>
+</body>
+</html>

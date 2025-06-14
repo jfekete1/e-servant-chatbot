@@ -6,16 +6,15 @@ import json
 import calendar
 import time
 from lara import parser, entities
-from flask import Flask, render_template, jsonify, request, send_file
+from flask import Flask, request, jsonify, render_template, render_template_string, send_file, redirect, url_for
 import processor
 import os
 import os.path
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 from pymongo import MongoClient
 
 import openai
-from flask import Flask, redirect, render_template, request, url_for
 
 import sys
 from waitress import serve
@@ -95,6 +94,36 @@ def save_data(data):
 #####################################################################################################################
 # Routes block
 #####################################################################################################################
+@app.route("/apus/dashboard")
+def apus_dashboard():
+    start = request.args.get("start")  # e.g. '2025-06-14T08:00:00'
+    end = request.args.get("end")      # e.g. '2025-06-14T12:00:00'
+
+    query = {}
+    if start and end:
+        query["timestamp"] = {
+            "$gte": datetime.fromisoformat(start),
+            "$lte": datetime.fromisoformat(end)
+        }
+
+    data_cursor = collection.find(query).sort("timestamp", 1)
+    data = list(data_cursor)
+
+    # Prepare data for Vega
+    chart_data = [
+        {
+            "timestamp": doc["timestamp"].isoformat(),
+            "temp": doc.get("temp"),
+            "humidity": doc.get("humidity"),
+            "pressure": doc.get("pressure"),
+        }
+        for doc in data
+    ]
+
+    return render_template("dashboard.html", chart_data=json.dumps(chart_data))
+
+
+
 
 """ @app.route("/api/v1/weather", methods=["POST"])
 def receive_weather():

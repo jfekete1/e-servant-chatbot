@@ -10,6 +10,9 @@ from flask import Flask, render_template, jsonify, request, send_file
 import processor
 import os
 import os.path
+from datetime import datetime
+from functools import wraps
+from pymongo import MongoClient
 
 import openai
 from flask import Flask, redirect, render_template, request, url_for
@@ -20,105 +23,160 @@ sys.path.append(os.path.join(os.path.dirname(
     os.path.realpath(__file__)), os.pardir))
 
 
+#####################################################################################################################
+# Variables block
+#####################################################################################################################
+
 app = Flask(__name__)
 # for development
 # CORS(app)
-openai.api_key = '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'
+#openai.api_key = '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'
+openai.api_key = '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'
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
+API_KEY = os.getenv("WEATHER_API_KEY", "supersecret123")
+
+# Connect to MongoDB (default local Docker port)
+client = MongoClient("mongodb://localhost:27017/")
+# Select DB and collection
+db = client["weather_db"]
+collection = db["weather_data"]
+#####################################################################################################################
+
+
+
+
+#####################################################################################################################
+# Functions block
+#####################################################################################################################
+
+def require_api_key(view_function):
+    @wraps(view_function)
+    def decorated_function(*args, **kwargs):
+        key = request.headers.get("DD-API-KEY")
+        if key != API_KEY:
+            return jsonify({"error": "Unauthorized"}), 401
+        return view_function(*args, **kwargs)
+    return decorated_function
+
+def save_data(data):
+    # Add timestamp to each record
+    data["timestamp"] = datetime.utcnow()
+
+    # Insert the document into the MongoDB collection
+    result = collection.insert_one(data)
+    return result.inserted_id
+    #print(f"Inserted weather data with ID: {result.inserted_id}")
+
+""" def save_data(data):
+    # Get today's date as a string, e.g. '2025-06-14'
+    today_str = datetime.now().strftime("%Y-%m-%d")
+
+    # Construct the filename with the date
+    data_file = f"weather_data_{today_str}.json"
+
+    existing_data = []
+
+    if os.path.exists(data_file):
+        with open(data_file, 'r') as f:
+            try:
+                existing_data = json.load(f)
+            except json.JSONDecodeError:
+                print(f"Warning: JSON file {data_file} is empty or malformed. Overwriting.")
+                existing_data = []
+
+    existing_data.append(data)
+
+    with open(data_file, 'w') as f:
+        json.dump(existing_data, f, indent=2) """
+#####################################################################################################################
+
+
+
+
+#####################################################################################################################
+# Routes block
+#####################################################################################################################
+
+""" @app.route("/api/v1/weather", methods=["POST"])
+def receive_weather():
+    try:
+        data = request.get_json(force=True)
+        print("Received weather data:", data)
+        save_data(data)
+        return jsonify({"status": "ok", "received": data}), 200
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"error": str(e)}), 400 """
+
+@app.route("/api/v1/weather", methods=["POST"])
+def receive_weather():
+    try:
+        data = request.get_json(force=True)
+        print("Received weather data:", data)
+
+        # Save to DB
+        inserted_id = save_data(data)
+
+        # Make a copy WITHOUT the MongoDB _id (to prevent jsonify error)
+        response_data = {k: v for k, v in data.items() if k != "_id"}
+
+        return jsonify({
+            "status": "ok",
+            "inserted_id": str(inserted_id),
+            "received": response_data
+        }), 200
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"error": str(e)}), 400
+
 
 # @app.route('/', methods=["GET", "POST"])
 # def index():
 #     return render_template('index.html', **locals())
 
-@app.route('/api', methods=["GET", "POST"])
-def api():
-    if request.method == 'GET':
-        with open('trained_model.json') as f:
-            data = json.load(f)
-            return jsonify(data)
-    if request.method == 'POST':
-        # data = request.get_json(force=True)
-        data = request.json
-        print('icomming request: ')
-        print(request.args)
-        print(data)
-        with open('trained_model.json', 'w') as json_file:
-            json.dump(data, json_file)
-        return jsonify(data)
-    else:
-        return "ERROR: Unknown method"
-
 @app.route('/', methods=["GET", "POST"])
 def index():
-    txt = request.args.get('speech')
-    lang = request.args.get('lang')
-    prompt = request.args.get('prompt')
-    if txt == "":
-        txt = "szia"
-    print("Ezt a stringet kaptam: ")
-    print(txt)
-    print("Ezt a nyelvet kaptam: ")
-    print(lang)
-    current_GMT = time.gmtime()
-    ts = calendar.timegm(current_GMT)
-    filename = str(ts) + ".mp3"
-    response = ""
+    if request.method == 'GET':
+        try:
+            with open('data.txt', 'r') as file:
+                message = file.read()
+                message = message.replace('\n', '<br>')
+                file.close()
+           #return jsonify({'message': message})
+            return message
+        except FileNotFoundError:
+            return jsonify({'message': 'Data file not found'}), 404
 
-    common = entities.common()
-    common_match = parser.Intents(common).match_set(txt)
+    if request.method == 'POST':
+        try:
+            data = request.json
+            message = data.get('message')
 
-    if common_match:
-        print("Az alábbi általános üzenetet kaptam:")
-        for com in common_match:
-            print(com)
-            response += processor.greeting(com)
+            if message:
+                with open('data.txt', 'w') as file:
+                    file.write(message)
+                    file.close()
 
-    commands = entities.commands()
-    commands_match = parser.Intents(commands).match_set(txt)
+                return jsonify({'status': 'success'})
+            else:
+                return jsonify({'status': 'error'})
 
-    if commands_match:
-        print('Az alábbi feladatokat adtad ki a számomra:')
-        i = 0
-        for command in commands_match:
-            print(command)
-            response += processor.answer_command(command, txt, i)
-            i = i + 1
-
-    if common_match:
-        print("Az alábbi általános üzenetet kaptam:")
-        for com in common_match:
-            print(com)
-            response += processor.answer_common(com)
-
-    if response != "":
-        time.sleep(1)
-        wav_str = processor.create_base64_wav(response, filename, lang)
-
-        return json.dumps({'msg': response, 'wavstr': wav_str})
-    else:
-        resp = openai.Completion.create(
-            model="text-davinci-002",
-            prompt=generate_prompt(txt, prompt),
-            temperature=0.9,
-            max_tokens=500,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0.6,
-            stop=[" Human:", " AI:"]
-        )
-        response = resp.choices[0].text
-        pprint(resp)
-        write_to_file(response, prompt)
-        response = response[5:]
-        # response = "Ismeretlen utasítás, kérlek olyan utasítást adj, amit tudok teljesíteni !"
-        wav_str = processor.create_base64_wav(response, filename, lang)
-        return json.dumps({'msg': response, 'wavstr': wav_str})
+        except Exception as e:
+            return jsonify({'status': str(e)})
 
 @app.route('/deletefiles', methods=['DELETE'])
 def deletefiles():
     print("deletefiles route activated ")
-    # response = delete_files()
+    response = delete_files()
     return json.dumps({'msg': "ASDASDADSASD"})
+
+@app.route('/weatherdog.jpg')
+def serve_image():
+    return send_from_directory('static', 'weatherdog.jpg')
+
+#####################################################################################################################
+
+
 
 
 def write_to_file(text, filename):

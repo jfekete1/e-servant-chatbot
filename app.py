@@ -122,6 +122,28 @@ def apus_dashboard():
 
     return render_template("dashboard.html", chart_data=json.dumps(chart_data))
 
+@app.route('/apus/dashboard/data')
+def dashboard_data():
+    start = request.args.get('start')
+    end = request.args.get('end')
+    query = {}
+
+    if start and end:
+        try:
+            start_dt = datetime.fromisoformat(start)
+            end_dt = datetime.fromisoformat(end)
+            query["timestamp"] = {"$gte": start_dt, "$lte": end_dt}
+        except ValueError:
+            pass  # Handle bad input if needed
+
+    data = list(collection.find(query).sort("timestamp", 1))
+    for d in data:
+        d["_id"] = str(d["_id"])
+        d["timestamp"] = d["timestamp"].isoformat()
+
+    return jsonify(data)
+
+
 
 
 

@@ -1,79 +1,227 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="UTF-8">
-  <title>Apus Weather Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 20px;
-    }
-    #vis {
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Üvegház idójárás</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        .charts {
+            display: flex;
+            /*flex-wrap: nowrap;*/
+            gap: 20px;
+        }
+
+        .chart {
+            flex: 1;
+        }
+
+        #data-table {
+            margin-top: 40px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #data-table th,
+        #data-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #data-table th {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
+
 <body>
-  <h1>Üvegház időjárás</h1>
+    <h1>Apus Weather Dashboard</h1>
 
-  <form id="rangeForm">
-    <label>
-      Start:
-      <input type="datetime-local" name="start" required>
-    </label>
-    <label>
-      End:
-      <input type="datetime-local" name="end" required>
-    </label>
-    <button type="submit">Update</button>
-  </form>
+    <form id="rangeForm">
+        <label>
+            Start:
+            <input type="datetime-local" name="start">
+        </label>
+        <label>
+            End:
+            <input type="datetime-local" name="end">
+        </label>
+        <button type="submit">Update</button>
+    </form>
 
-  <div id="vis"></div>
+    <div class="charts">
+        <div class="chart" id="temp-chart"></div>
+        <div class="chart" id="humidity-chart"></div>
+        <div class="chart" id="pressure-chart"></div>
+    </div>
 
-  <script>
-  document.getElementById('rangeForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const start = e.target.start.value;
-    const end = e.target.end.value;
-    const url = `/apus/dashboard?start=${start}&end=${end}`;
-    window.location.href = url;
-  });
-
-  const chartData = {{ chart_data | tojson }};
-
-  const baseSpec = (field, title, color) => ({
-    mark: { type: "line", tooltip: true },
-    width: 250,
-    height: 200,
-    encoding: {
-        x: { field: "timestamp", type: "temporal", title: "Time" },
-        y: { field: field, type: "quantitative", title: title },
-        color: { value: color },
-        tooltip: [
-            { field: "timestamp", type: "temporal", title: "Time" },
-            { field: field, type: "quantitative", title: title }
-        ]
-    }
-  });
-
-
-  const spec = {
-    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "data": { "values": chartData },
-    "hconcat": [
-      baseSpec("temp", "Temperature (°C)", "#e63946"),
-      baseSpec("humidity", "Humidity (%)", "#457b9d"),
-      baseSpec("pressure", "Pressure (hPa)", "#2a9d8f")
-    ]
-  };
-
-  vegaEmbed('#vis', spec);
-</script>
+    <h2>Raw Data</h2>
+    <button id="export-btn">Export as CSV</button>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Temperature (°C)</th>
+                <th>Humidity (%)</th>
+                <th>Pressure (hPa)</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Rows will be inserted by JS -->
+        </tbody>
+    </table>
+    <div id="pagination" style="margin-top: 10px; text-align: center;">
+        <button id="prev-btn">Prev</button>
+        <span id="page-info" style="margin: 0 10px;"></span>
+        <button id="next-btn">Next</button>
+    </div>
 
 
+    <script>
+        let chartData = {{ chart_data | safe }};
+        let currentPage = 1;
+        const rowsPerPage = 10;
 
+        const fields = [
+            { id: "temp-chart", field: "temp", title: "Temperature (°C)" },
+            { id: "humidity-chart", field: "humidity", title: "Humidity (%)" },
+            { id: "pressure-chart", field: "pressure", title: "Pressure (hPa)" }
+        ];
+
+        function renderCharts(data) {
+            fields.forEach(({ id, field, title }) => {
+                vegaEmbed(`#${id}`, {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                    "width": 420,
+                    "height": 200,
+                    "description": `${title} over time`,
+                    "data": { "values": data },
+                    "mark": {
+                        "type": "line",
+                        "tooltip": true
+                    },
+                    "encoding": {
+                        "x": { "field": "timestamp", "type": "temporal", "title": "Time" },
+                        "y": { "field": field, "type": "quantitative", "title": title },
+                        "tooltip": [
+                            { "field": "timestamp", "type": "temporal", "title": "Time" },
+                            { "field": field, "type": "quantitative", "title": title }
+                        ]
+                    }
+                });
+            });
+        }
+
+        function renderTablePage(data, page) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            const startIndex = (page - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const pageData = data.slice(startIndex, endIndex);
+
+            pageData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td>${new Date(row.timestamp).toLocaleString()}</td>
+                <td>${row.temp ?? ''}</td>
+                <td>${row.humidity ?? ''}</td>
+                <td>${row.pressure ?? ''}</td>
+            `;
+                tbody.appendChild(tr);
+            });
+
+            updatePaginationControls(data.length, page);
+        }
+
+        function updatePaginationControls(totalItems, page) {
+            const totalPages = Math.ceil(totalItems / rowsPerPage);
+            document.getElementById('page-info').textContent = `Page ${page} of ${totalPages}`;
+            document.getElementById('prev-btn').disabled = page <= 1;
+            document.getElementById('next-btn').disabled = page >= totalPages;
+        }
+
+        function renderTable(data) {
+            renderTablePage(data, currentPage);
+        }
+
+        function updateDashboard() {
+            console.log("updating dashboard...")
+            const start = document.querySelector('input[name="start"]').value;
+            const end = document.querySelector('input[name="end"]').value;
+            const params = new URLSearchParams();
+            if (start) params.append('start', start);
+            if (end) params.append('end', end);
+
+            fetch(`/apus/dashboard/data?${params.toString()}`)
+                .then(res => res.json())
+                .then(data => {
+                    chartData = data;
+                    renderCharts(chartData);
+                    renderTable(chartData);
+                })
+                .catch(err => console.error("Error fetching data:", err));
+        }
+
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTablePage(chartData, currentPage);
+            }
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            const totalPages = Math.ceil(chartData.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTablePage(chartData, currentPage);
+            }
+        });
+
+        document.getElementById('rangeForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            updateDashboard();
+        });
+
+        document.getElementById('export-btn').addEventListener('click', function () {
+            const rows = [
+                ["Timestamp", "Temperature (°C)", "Humidity (%)", "Pressure (hPa)"]
+            ];
+
+            chartData.forEach(row => {
+                rows.push([
+                    new Date(row.timestamp).toLocaleString(),
+                    row.temp ?? '',
+                    row.humidity ?? '',
+                    row.pressure ?? ''
+                ]);
+            });
+
+            const csvContent = rows.map(e => e.join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "weather_data.csv";
+            link.style.display = "none";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Initial render
+        renderCharts(chartData);
+        renderTable(chartData);
+
+        // Live update every 60 seconds
+        setInterval(updateDashboard, 60000);
+    </script>
 </body>
+
 </html>

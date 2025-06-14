@@ -17,7 +17,7 @@
   </style>
 </head>
 <body>
-  <h1>Apus Weather Dashboard</h1>
+  <h1>Üvegház időjárás</h1>
 
   <form id="rangeForm">
     <label>
@@ -34,28 +34,46 @@
   <div id="vis"></div>
 
   <script>
-    document.getElementById('rangeForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const start = e.target.start.value;
-      const end = e.target.end.value;
-      const url = `/apus/dashboard?start=${start}&end=${end}`;
-      window.location.href = url;
-    });
+  document.getElementById('rangeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const start = e.target.start.value;
+    const end = e.target.end.value;
+    const url = `/apus/dashboard?start=${start}&end=${end}`;
+    window.location.href = url;
+  });
 
-    const chartData = {{ chart_data | safe }};
+  const chartData = {{ chart_data | tojson }};
 
-    const spec = {
-      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "description": "Temperature over time",
-      "data": { "values": chartData },
-      "mark": "line",
-      "encoding": {
-        "x": { "field": "timestamp", "type": "temporal", "title": "Time" },
-        "y": { "field": "temp", "type": "quantitative", "title": "Temperature (°C)" }
-      }
-    };
+  const baseSpec = (field, title, color) => ({
+    mark: { type: "line", tooltip: true },
+    width: 250,
+    height: 200,
+    encoding: {
+        x: { field: "timestamp", type: "temporal", title: "Time" },
+        y: { field: field, type: "quantitative", title: title },
+        color: { value: color },
+        tooltip: [
+            { field: "timestamp", type: "temporal", title: "Time" },
+            { field: field, type: "quantitative", title: title }
+        ]
+    }
+  });
 
-    vegaEmbed('#vis', spec);
-  </script>
+
+  const spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": { "values": chartData },
+    "hconcat": [
+      baseSpec("temp", "Temperature (°C)", "#e63946"),
+      baseSpec("humidity", "Humidity (%)", "#457b9d"),
+      baseSpec("pressure", "Pressure (hPa)", "#2a9d8f")
+    ]
+  };
+
+  vegaEmbed('#vis', spec);
+</script>
+
+
+
 </body>
 </html>

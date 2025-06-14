@@ -30,8 +30,7 @@ sys.path.append(os.path.join(os.path.dirname(
 app = Flask(__name__)
 # for development
 # CORS(app)
-#openai.api_key = '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'
-openai.api_key = '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'
+openai.api_key = os.getenv("OPENAI_API_KEY")
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 API_KEY = os.getenv("WEATHER_API_KEY", "supersecret123")
 

@@ -33,6 +33,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
 API_KEY = os.getenv("WEATHER_API_KEY", "supersecret123")
 
+TODO_FILE = 'todo.json'
+
 # Connect to MongoDB (default local Docker port)
 client = MongoClient("mongodb://localhost:27017/")
 # Select DB and collection
@@ -56,14 +58,43 @@ def require_api_key(view_function):
         return view_function(*args, **kwargs)
     return decorated_function
 
+#def save_data(data):
+    # Ensure timestamp comes from client (UTC+2) and convert to UTC
+#    if "timestamp" in data:
+#        utc_plus_2 = timezone(timedelta(hours=2))
+#        ts = datetime.fromisoformat(data["timestamp"]).replace(tzinfo=utc_plus_2)
+#        data["timestamp"] = ts.astimezone(timezone.utc)
+#    else:
+        # fallback if no timestamp is sent
+#        data["timestamp"] = datetime.now(timezone.utc)
+
+    # Insert the document into the MongoDB collection
+#    result = collection.insert_one(data)
+#    return result.inserted_id
+
 def save_data(data):
     # Add timestamp to each record
+#    today = datetime.datetime.now()
+#    todayPlus2Hours = today + datetime.timedelta(hours=2)
+#    data["timestamp"] = todayPlus2Hours
     data["timestamp"] = datetime.utcnow()
 
     # Insert the document into the MongoDB collection
     result = collection.insert_one(data)
     return result.inserted_id
     #print(f"Inserted weather data with ID: {result.inserted_id}")
+
+# Utility: Load todos from file
+def load_todos():
+    if not os.path.exists(TODO_FILE):
+        return []
+    with open(TODO_FILE, 'r') as f:
+        return json.load(f)
+
+# Utility: Save todos to file
+def save_todos(todos):
+    with open(TODO_FILE, 'w') as f:
+        json.dump(todos, f)
 
 """ def save_data(data):
     # Get today's date as a string, e.g. '2025-06-14'
@@ -87,6 +118,9 @@ def save_data(data):
     with open(data_file, 'w') as f:
         json.dump(existing_data, f, indent=2) """
 #####################################################################################################################
+
+
+
 
 
 
@@ -143,8 +177,37 @@ def dashboard_data():
 
     return jsonify(data)
 
+@app.route('/api/v1/todo', methods=['GET', 'POST', 'DELETE'])
+def todo():
+    todos = load_todos()
 
+    if request.method == 'GET':
+        return jsonify(todos)
 
+    elif request.method == 'POST':
+        data = request.get_json()
+        item = data.get('item') if data else None
+        if not item or not isinstance(item, str):
+            return jsonify({'error': 'Missing or invalid "item"'}), 400
+        todos.append(item)
+        save_todos(todos)
+        return jsonify({'status': 'added', 'item': item, 'todos': todos}), 201
+
+    elif request.method == 'DELETE':
+        data = request.get_json()
+        item = data.get('item') if data else None
+        index = data.get('index') if data else None
+
+        if item and item in todos:
+            todos.remove(item)
+            save_todos(todos)
+            return jsonify({'status': 'deleted', 'item': item, 'todos': todos})
+        elif isinstance(index, int) and 0 <= index < len(todos):
+            removed = todos.pop(index)
+            save_todos(todos)
+            return jsonify({'status': 'deleted', 'item': removed, 'todos': todos})
+        else:
+            return jsonify({'error': 'Provide a valid "item" or "index" to delete'}), 400
 
 
 """ @app.route("/api/v1/weather", methods=["POST"])

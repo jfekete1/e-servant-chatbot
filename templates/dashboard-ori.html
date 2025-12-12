@@ -87,8 +87,8 @@
 
     <script>
         let chartData = {{ chart_data | safe }};
+        let currentPage = 1;
         const rowsPerPage = 10;
-        let currentPage = Math.ceil(chartData.length / rowsPerPage) || 1;
 
         const fields = [
             { id: "temp-chart", field: "temp", title: "Temperature (°C)" },

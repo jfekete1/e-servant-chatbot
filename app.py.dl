@@ -1,0 +1,118 @@
+# for development
+# from flask_cors import CORS
+
+from pprint import pprint
+import json
+import calendar
+import time
+from lara import parser, entities
+from flask import Flask, render_template, jsonify, request, send_file, send_from_directory
+import processor
+import os
+import os.path
+
+import openai
+from flask import Flask, redirect, render_template, request, url_for
+
+import sys
+from waitress import serve
+sys.path.append(os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), os.pardir))
+
+
+app = Flask(__name__)
+# for development
+# CORS(app)
+#openai.api_key = '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'
+openai.api_key = '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'
+app.config['SECRET_KEY'] = 'ez-a-kulcsom-3479373872943'
+
+# @app.route('/', methods=["GET", "POST"])
+# def index():
+#     return render_template('index.html', **locals())
+
+@app.route('/', methods=["GET", "POST"])
+def index():
+    pac_directory = './'
+    filename = 'SSOtest.pac'
+    return send_from_directory(pac_directory, filename, as_attachment=True)
+
+
+@app.route('/deletefiles', methods=['DELETE'])
+def deletefiles():
+    print("deletefiles route activated ")
+    response = delete_files()
+    return json.dumps({'msg': "ASDASDADSASD"})
+
+
+def write_to_file(text, filename):
+    f = open(filename, "a")
+    f.write(text)
+    f.close()
+
+def delete_files():
+    files = os.listdir('.')
+    for file in files:
+        if '.' not in file and not os.path.isdir(file):
+                os.remove(file)
+    return "deleted all files"
+
+def write_to_resp(text):
+    f = open("resp.txt", "a")
+    f.write(text)
+    f.close()
+
+def generate_prompt(text, filename):
+    if text:
+        text = "\nHuman: " + text
+    if not os.path.exists(filename):
+        f = open("prompt.txt", "r")
+        data = f.read()
+        f.close()
+        write_to_file(data, filename)
+    write_to_file(text, filename)
+    f = open(filename, "r")
+    data = f.read()
+    f.close()
+    return data
+
+@app.route('/speech', methods=['GET'])
+def get_speech():
+    txt = request.args.get('speech')
+    if txt == "":
+        txt = "szia"
+    print("Ezt a stringet kaptam: ")
+    print(txt)
+    current_GMT = time.gmtime()
+    ts = calendar.timegm(current_GMT)
+    filename = str(ts) + ".mp3"
+
+    wav_str = processor.create_base64_wav(txt, filename, "hu")
+    return json.dumps({'msg': txt, 'wavstr': wav_str})
+
+@app.route('/file', methods=['GET'])
+def get_file():
+    filename = request.args.get('filename')
+    # filename = "trained_model.json"
+    return send_file(filename, as_attachment=True)
+
+# @app.route('/sms', methods=['GET'])
+# def get_sms():
+#     key = request.args.get('key')
+#     message = request.args.get('message')
+#     number = request.args.get('number')
+#     print("Sending SMS")
+#     processor.send_sms(message, number, key)
+#     return "asdasd"
+
+
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port='8080', debug=True)
+
+def main_prod():
+    serve(app, host='0.0.0.0', port=8080, url_scheme='https')
+    # serve(app, host='0.0.0.0', port=8080)
+
+
+if __name__ == '__main__':
+    main_prod()

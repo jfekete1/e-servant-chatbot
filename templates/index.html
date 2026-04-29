@@ -420,37 +420,58 @@
 
           $.ajax({
               type: "POST",
-              url: "/chatbot",
-              data: {
-                  question: $("#question").val()
-              },
+              url: "/llm/v1/chat/completions",
+              contentType: "application/json",
+              data: JSON.stringify({
+                  model: "PULI-LlumiX-32K-instruct-Q5_K_M.gguf",
+                  messages: [
+                      {
+                          role: "user",
+                          content: $("#question").val()
+                      }
+                  ],
+                  temperature: 0.7,
+                  max_tokens: 512,
+                  stream: false
+              }),
               success: function(result) {
-                if (result.response.includes("Találat:"))
-                {
-                  let link_txt = result.response.match(/Találat:(.*)$/i)[1];
-                  $("#response").append("<br>Én: "+$("#question").val()+ "<br> E-servant: Kérésedet feldolgoztam."+ "<br> E-servant: "+"<a href=\""+link_txt+"\">"+link_txt+"</a></br>");
+                  let responseText = result.choices[0].message.content;
+
+                  if (responseText.includes("Találat:"))
+                  {
+                      let link_txt = responseText.match(/Találat:(.*)$/i)[1];
+
+                      $("#response").append(
+                          "<br>Én: " + $("#question").val() +
+                          "<br>E-servant: Kérésedet feldolgoztam." +
+                          "<br>E-servant: <a href=\"" + link_txt + "\">" + link_txt + "</a></br>"
+                      );
+                      setStatus('');
+                  }
+                  else if (responseText.includes("Ismeretlen parancs"))
+                  {
+                      $("#response").append(
+                          "<br>Én: " + $("#question").val() +
+                          "<br>E-servant: " + responseText
+                      );
+                      setStatus('computing');
+                  }
+                  else
+                  {
+                      $("#response").append(
+                          "<br>Én: " + $("#question").val() +
+                          "<br>E-servant: " + responseText
+                      );
+                      setStatus('');
+                  }
+
                   $("#question").val("");
-                  setStatus('');
-                }
-                else if (result.response.includes("Ismeretlen parancs"))
-                {
-                  $("#response").append("<br>Én: "+$("#question").val()+ "<br> E-servant: "+result.response);
-                  $("#question").val("");
-                  setStatus('computing');
-                }
-                else
-                {
-                  $("#response").append("<br>Én: "+$("#question").val()+ "<br> E-servant: "+result.response);
-                  $("#question").val("");
-                  setStatus('');
-                }
               },
-              error: function(result) {
+              error: function(xhr) {
+                  console.error(xhr.responseText);
                   alert('error');
               }
           });
-
-
 
         });
 

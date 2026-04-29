@@ -296,11 +296,11 @@ def receive_weather():
         return jsonify({"error": str(e)}), 400
 
 
-# @app.route('/', methods=["GET", "POST"])
-# def index():
-#     return render_template('index.html', **locals())
-
 @app.route('/', methods=["GET", "POST"])
+def index():
+    return render_template('index.html', **locals())
+
+@app.route('/txt', methods=["GET", "POST"])
 def index():
     if request.method == 'GET':
         try:

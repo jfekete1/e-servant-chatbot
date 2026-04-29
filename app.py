@@ -301,7 +301,7 @@ def index():
     return render_template('index.html', **locals())
 
 @app.route('/txt', methods=["GET", "POST"])
-def index():
+def show_txt():
     if request.method == 'GET':
         try:
             with open('data.txt', 'r') as file:

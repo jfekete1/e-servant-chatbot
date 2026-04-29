@@ -13,6 +13,8 @@ import os.path
 from datetime import datetime, timedelta
 from functools import wraps
 from pymongo import MongoClient
+import requests
+from bs4 import BeautifulSoup
 
 import openai
 
@@ -95,6 +97,13 @@ def load_todos():
 def save_todos(todos):
     with open(TODO_FILE, 'w') as f:
         json.dump(todos, f)
+
+def require_api_key():
+    client_key = request.headers.get("api-key")
+    API_KEY = os.getenv("SEARCH_API_KEY", "lesz1X5Bmw-mB+")
+
+    if not client_key or client_key != API_KEY:
+        return jsonify({"error": "Unauthorized"}), 401
 
 """ def save_data(data):
     # Get today's date as a string, e.g. '2025-06-14'
@@ -209,6 +218,50 @@ def todo():
         else:
             return jsonify({'error': 'Provide a valid "item" or "index" to delete'}), 400
 
+@app.route('/api/v1/search', methods=['GET'])
+def search():
+    auth_error = require_api_key()
+    if auth_error:
+        return auth_error
+
+    query = request.args.get('q')
+
+    if not query:
+        return jsonify({'error': 'Missing query parameter ?q='}), 400
+
+    url = "https://html.duckduckgo.com/html/"
+    params = {
+        "q": query
+    }
+
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+
+    try:
+        response = requests.post(url, data=params, headers=headers)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        results = []
+
+        for result in soup.select(".result")[:5]:
+            title_tag = result.select_one(".result__a")
+            snippet_tag = result.select_one(".result__snippet")
+
+            if title_tag:
+                results.append({
+                    "title": title_tag.get_text(),
+                    "url": title_tag.get("href"),
+                    "snippet": snippet_tag.get_text() if snippet_tag else ""
+                })
+
+        return jsonify({
+            "query": query,
+            "results": results
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 """ @app.route("/api/v1/weather", methods=["POST"])
 def receive_weather():

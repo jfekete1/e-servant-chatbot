@@ -376,11 +376,10 @@ def generate_prompt(text, filename):
     f.close()
     return data
 
-@app.route('/speech', methods=['GET'])
+@app.route('/speech', methods=['POST'])
 def get_speech():
-    txt = request.args.get('speech')
-    if txt == "":
-        txt = "szia"
+    data = request.json
+    txt = data.get('speech', 'szia')
     print("Ezt a stringet kaptam: ")
     print(txt)
     current_GMT = time.gmtime()
@@ -388,6 +387,7 @@ def get_speech():
     filename = str(ts) + ".mp3"
 
     wav_str = processor.create_base64_wav(txt, filename, "hu")
+    #return jsonify({'msg': txt, 'wavstr': wav_str})
     return json.dumps({'msg': txt, 'wavstr': wav_str})
 
 @app.route('/file', methods=['GET'])

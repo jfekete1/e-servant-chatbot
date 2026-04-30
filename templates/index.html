@@ -65,6 +65,7 @@
       height: 100%;
       border: 0.4em solid #FFF;
       border-radius: 1.5em;
+      cursor: pointer;
       /*border : 1px solid red;*/
     }
 
@@ -568,7 +569,7 @@
               if (data === "[DONE]") {
                 lastAssistantText = assistantText;
                 messages.push({ role: "assistant", content: assistantText });
-                setStatus('speaking'); // 👈 speaking animation
+                setStatus('');
                 return;
               }
 
@@ -604,6 +605,7 @@
         if (!text) return;
 
         setStatus('thinking'); // waiting for TTS
+        await new Promise(r => setTimeout(r, 50));
 
         try {
           //const res = await fetch(`/speech?speech=${encodeURIComponent(text)}`);
@@ -639,7 +641,7 @@
         }
       }
 
-      $("#container").click(function () {
+      $("#face").click(function () {
         if (!lastAssistantText) return;
 
         playTTS(lastAssistantText);

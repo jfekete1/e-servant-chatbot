@@ -606,7 +606,12 @@
         setStatus('thinking'); // waiting for TTS
 
         try {
-          const res = await fetch(`/speech?speech=${encodeURIComponent(text)}`);
+          //const res = await fetch(`/speech?speech=${encodeURIComponent(text)}`);
+          const res = await fetch("/speech", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ speech: text })
+          });
           const data = await res.json();
 
           // convert base64 → audio

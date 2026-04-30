@@ -69,6 +69,10 @@
       /*border : 1px solid red;*/
     }
 
+    #face:hover {
+      filter: brightness(1.3);
+    }
+
     #left-ear,
     #right-ear {
       position: absolute;
@@ -642,7 +646,8 @@
       }
 
       $("#face").click(function () {
-        if (!lastAssistantText) return;
+        if (!lastAssistantText || lastAssistantText.trim() === "") return;
+        setStatus('computing');
 
         playTTS(lastAssistantText);
       });

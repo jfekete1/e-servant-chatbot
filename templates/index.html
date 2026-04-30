@@ -608,7 +608,7 @@
       async function playTTS(text) {
         if (!text) return;
 
-        setStatus('thinking'); // waiting for TTS
+        setStatus('listening'); // waiting for TTS
         await new Promise(r => setTimeout(r, 50));
 
         try {
@@ -647,7 +647,6 @@
 
       $("#face").click(function () {
         if (!lastAssistantText || lastAssistantText.trim() === "") return;
-        setStatus('computing');
 
         playTTS(lastAssistantText);
       });
